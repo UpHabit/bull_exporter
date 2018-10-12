@@ -63,9 +63,13 @@ export class MetricCollector {
     };
   }
 
-  public async updateAll() {
+  public async updateAll(): Promise<void> {
     const updatePromises = this.queues.map(q => getStats(q.prefix, q.name, q.queue, this.guages));
     await Promise.all(updatePromises);
+  }
+
+  public async close(): Promise<void> {
+    await Promise.all(this.queues.map(q => q.queue.close()));
   }
 
 }

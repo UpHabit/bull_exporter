@@ -1,5 +1,4 @@
 import promClient from 'prom-client';
-import { promisify } from 'util';
 import yargs from 'yargs';
 
 import { version } from '../package.json';
@@ -28,7 +27,7 @@ export async function main(...args: string[]): Promise<void> {
 
   const collector = new MetricCollector(opts.prefix, opts._, { redis: opts.url });
   await collector.updateAll();
-
+  await collector.close();
   console.log(promClient.register.metrics());
 }
 
@@ -37,7 +36,14 @@ if (require.main === module) {
 
   let exitCode = 0;
   main(...args)
-    .catch(() => exitCode = 1)
-    .then(() => promisify(setTimeout)(50))
-    .then(() => process.exit(exitCode));
+    .catch(() => process.exitCode = exitCode = 1)
+    .then(() => {
+      setTimeout(
+        () => {
+          console.error('No clean exit after 5 seconds, force exit');
+          process.exit(exitCode);
+        },
+        5000,
+      ).unref();
+    });
 }
