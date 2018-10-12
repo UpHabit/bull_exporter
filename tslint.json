@@ -1,0 +1,51 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-airbnb"
+  ],
+  "linterOptions": {
+    "format": "stylish",
+    "exclude": [
+      "**/*.json",
+      "**/*.js"
+    ]
+  },
+  "rules": {
+    "ter-arrow-parens": [true, "as-needed"],
+    "ter-indent": [true, 2, {
+      "SwitchCase": 1
+    }],
+    "curly": [true],
+    "max-line-length": [true, 255],
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "case-insensitive",
+        "named-imports-order": "case-insensitive",
+        "grouped-imports": true,
+        "module-source-path": "full"
+      }
+    ],
+    "quotemark": [true, "single", "avoid-escape"],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+    "typedef": [true, "call-signature", "parameter", "property-declaration", "member-variable-declaration"],
+    "await-promise": [true, "RequestPromise", "Bluebird"],
+    "no-floating-promises": [true, "RequestPromise", "Bluebird"],
+    "object-literal-sort-keys": false,
+    "prefer-for-of": true,
+    "no-for-in-array": true,
+    "deprecation": true,
+    "ban-comma-operator": true,
+    "interface-name": false,
+    "interface-over-type-literal": false,
+    "no-unnecessary-initializer": false,
+    "array-type": false,
+    "member-ordering": false,
+    "max-classes-per-file": false,
+    "unified-signatures": false,
+    "no-namespace": false,
+    "prefer-object-spread": true,
+    "triple-equals": true,
+    "eofline": true
+  }
+}
