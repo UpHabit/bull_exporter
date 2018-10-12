@@ -1,34 +1,29 @@
 import promClient from 'prom-client';
-import yargs from 'yargs';
 
-import { version } from '../package.json';
-
+import { logger } from './logger';
 import { MetricCollector } from './metricCollector';
+import { getOptionsFromArgs, Options } from './options';
+import { startServer } from './server';
 
-export function getArgs(...args: string[]): { url: string, prefix: string, _: string[] } {
-  return yargs
-    .usage('prom-metrics [queueNames]')
-
-    .alias('u', 'url')
-    .demandOption('url', 'A redis connection url')
-    .default('url', 'redis://127.0.0.1:6379')
-
-    .alias('p', 'prefix')
-    .demandOption('prefix', 'metrics prefix')
-    .default('prefix', 'uhapp_queue_')
-
-    .demandCommand(1)
-    .version(version)
-    .parse(args) as any;
-}
-
-export async function main(...args: string[]): Promise<void> {
-  const opts = getArgs(...args);
-
+export async function printOnce(opts: Options): Promise<void> {
   const collector = new MetricCollector(opts.prefix, opts._, { redis: opts.url });
   await collector.updateAll();
   await collector.close();
   console.log(promClient.register.metrics());
+}
+
+export async function runServer(opts: Options): Promise<void> {
+  const { done } = await startServer(opts);
+  await done;
+}
+
+export async function main(...args: string[]): Promise<void> {
+  const opts = getOptionsFromArgs(...args);
+  if (opts.once) {
+    await printOnce(opts);
+  } else {
+    await runServer(opts);
+  }
 }
 
 if (require.main === module) {
@@ -40,7 +35,7 @@ if (require.main === module) {
     .then(() => {
       setTimeout(
         () => {
-          console.error('No clean exit after 5 seconds, force exit');
+          logger.error('No clean exit after 5 seconds, force exit');
           process.exit(exitCode);
         },
         5000,
