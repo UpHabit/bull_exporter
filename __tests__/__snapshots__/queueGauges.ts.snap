@@ -1,5 +1,120 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should list 1 active job 1`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 1
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+"
+`;
+
+exports[`should list 1 active job 2`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 1
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+"
+`;
+
+exports[`should list 1 completed job 1`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 1
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
+"
+`;
+
+exports[`should list 1 delayed job 1`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 1
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
+"
+`;
+
+exports[`should list 1 failed job 1`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 1
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
+"
+`;
+
 exports[`should list 1 queued job 1`] = `
 "# HELP test_stat_completed Number of completed messages
 # TYPE test_stat_completed gauge
