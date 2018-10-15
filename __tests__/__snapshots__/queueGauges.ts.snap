@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should list 1 queued job 1`] = `
+"# HELP test_stat_completed Number of completed messages
+# TYPE test_stat_completed gauge
+test_stat_completed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
+
+# HELP test_stat_active Number of active messages
+# TYPE test_stat_active gauge
+test_stat_active{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
+
+# HELP test_stat_delayed Number of delayed messages
+# TYPE test_stat_delayed gauge
+test_stat_delayed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
+
+# HELP test_stat_failed Number of failed messages
+# TYPE test_stat_failed gauge
+test_stat_failed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
+
+# HELP test_stat_waiting Number of waiting messages
+# TYPE test_stat_waiting gauge
+test_stat_waiting{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 1
+"
+`;

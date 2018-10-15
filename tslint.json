@@ -15,6 +15,7 @@
     "ter-indent": [true, 2, {
       "SwitchCase": 1
     }],
+    "import-name": false,
     "curly": [true],
     "max-line-length": [true, 255],
     "ordered-imports": [

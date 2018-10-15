@@ -5,3 +5,5 @@ yarn-error.log*
 node_modules/
 dist/
 .idea/
+src/**/*.js
+__tests__/**/*.js
