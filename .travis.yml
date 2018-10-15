@@ -1,0 +1,53 @@
+language: node_js
+sudo: required
+
+node_js:
+  - 8.12.0
+
+env:
+  global:
+    - KUBECTL_VERSION=v1.11.0
+
+branches:
+  only:
+    - master
+    - develop
+    - /^release\/.+/
+
+services:
+  - redis-server
+  - docker
+
+
+before_script:
+  - yarn install --pure-lockfile
+  - yarn run build
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.local
+
+script:
+  - shellcheck -x $(git ls-files | grep '[.]sh$')
+  - ./node_modules/.bin/madge -c .
+  - yarn test
+
+before_deploy:
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+deploy:
+  # k8s development
+  - provider: script
+    skip_cleanup: true
+    'on':
+      branch: develop
+    script: bash -e ./setup/ci/travis_deploy.sh development
+
+  # k8s development
+  - provider: script
+    skip_cleanup: true
+    'on':
+      branch: master
+    script: bash -e ./setup/ci/travis_deploy.sh
