@@ -5,6 +5,7 @@ import { version } from '../package.json';
 export interface Options {
   url: string;
   prefix: string;
+  metricPrefix: string;
   once: boolean;
   port: number;
   bindAddress: string;
@@ -14,14 +15,19 @@ export interface Options {
 export function getOptionsFromArgs(...args: string[]): Options {
   return yargs
     .usage('prom-metrics [queueNames]')
+    .alias('V', 'version')
 
     .alias('u', 'url')
     .demandOption('url', 'A redis connection url')
     .default('url', 'redis://127.0.0.1:6379')
 
     .alias('p', 'prefix')
-    .demandOption('prefix', 'metrics prefix')
-    .default('prefix', 'uhapp_queue_')
+    .demandOption('prefix', 'bull prefix')
+    .default('prefix', 'bull')
+
+    .alias('m', 'metric-prefix')
+    .demandOption('metric-prefix', 'Metric prefix')
+    .default('metric-prefix', 'uhapp_queue_')
 
     .boolean('once')
     .alias('n', 'once')

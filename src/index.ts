@@ -6,7 +6,7 @@ import { getOptionsFromArgs, Options } from './options';
 import { startServer } from './server';
 
 export async function printOnce(opts: Options): Promise<void> {
-  const collector = new MetricCollector(opts.prefix, opts._, { redis: opts.url });
+  const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
   await collector.updateAll();
   await collector.close();
   console.log(promClient.register.metrics());

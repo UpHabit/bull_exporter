@@ -62,7 +62,7 @@ export function makeServer(opts: Options): express.Application {
     });
   });
 
-  const collector = new MetricCollector(opts.prefix, opts._, { redis: opts.url });
+  const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
 
   app.get('/metrics', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     collector.updateAll()

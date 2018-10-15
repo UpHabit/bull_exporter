@@ -1,10 +1,10 @@
 import bull from 'bull';
-import { Gauge, register as globalRegister, Registry } from 'prom-client';
+import { register as globalRegister, Registry } from 'prom-client';
 
 import { getStats, makeGuages, QueueGauges } from './queueGauges';
 
 export interface BullOptions extends  Pick<bull.QueueOptions, Exclude<keyof bull.QueueOptions, 'redis'>> {
-  redis?: string |  bull.QueueOptions['redis'];
+  redis?: string | bull.QueueOptions['redis'];
 }
 
 export class MetricCollector {
