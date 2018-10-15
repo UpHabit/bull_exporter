@@ -8,7 +8,8 @@
   "license": "UNLICNESED",
   "scripts": {
     "build": "tsc -p .",
-    "lint": "tslint -p ."
+    "lint": "tslint -p .",
+    "test": "jest --ci"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.1.0",

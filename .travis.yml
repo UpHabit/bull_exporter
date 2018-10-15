@@ -31,7 +31,8 @@ cache:
 script:
   - shellcheck -x $(git ls-files | grep '[.]sh$')
   - ./node_modules/.bin/madge -c .
-  - yarn test
+  - yarn run test
+  - yarn run lint
 
 before_deploy:
   - pip install --user awscli
