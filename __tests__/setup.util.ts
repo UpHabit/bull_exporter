@@ -1,9 +1,9 @@
 import * as crypto from 'crypto';
 
-let currentTest;
+let currentTest: any;
 
 (jasmine as any).getEnv().addReporter({
-  specStarted: result => currentTest = result,
+  specStarted: (result: any) => currentTest = result,
 });
 
 export function getCurrentTest(): string {

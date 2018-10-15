@@ -3,6 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
+# shellcheck disable=2001
 BRANCH_NAME="$(echo "${TRAVIS_BRANCH:-}" | sed 's,/,_,g')"
 hash="$(git log --pretty=format:'%h' -n 1)"
 if ! git diff --quiet ; then

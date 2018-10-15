@@ -9,7 +9,7 @@ module.exports = {
     '[.]util[.][jt]s$',
     '[.]d[.][jt]s$',
   ],
-  setupTestFrameworkScriptFile: '<rootDir>/__tests__/setup.util.js',
+  setupTestFrameworkScriptFile: '<rootDir>/__tests__/setup.util.ts',
   globals: {
     'ts-jest': {
       tsConfig: '__tests__/tsconfig.json'
