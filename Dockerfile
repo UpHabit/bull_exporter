@@ -9,6 +9,7 @@ COPY yarn.lock .
 RUN yarn install --pure-lockfile
 COPY . .
 RUN node_modules/.bin/tsc -p .
+RUN yarn install --pure-lockfile --production
 
 FROM node:8-alpine
 RUN mkdir -p /src
