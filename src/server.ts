@@ -1,5 +1,5 @@
 import express from 'express';
-import * as http from "http";
+import * as http from 'http';
 import promClient from 'prom-client';
 import { v4 as uuid } from 'uuid';
 

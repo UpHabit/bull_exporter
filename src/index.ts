@@ -5,10 +5,14 @@ import { MetricCollector } from './metricCollector';
 import { getOptionsFromArgs, Options } from './options';
 import { startServer } from './server';
 
+// because we explicitly want just the metrics here
+// tslint:disable:no-console
+
 export async function printOnce(opts: Options): Promise<void> {
   const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
   await collector.updateAll();
   await collector.close();
+
   console.log(promClient.register.metrics());
 }
 
@@ -40,5 +44,10 @@ if (require.main === module) {
         },
         5000,
       ).unref();
+    })
+    .catch(err => {
+      console.error('Double error');
+      console.error(err.stack);
+      process.exit(-1);
     });
 }
