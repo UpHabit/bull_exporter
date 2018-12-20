@@ -1,5 +1,5 @@
 import bull from 'bull';
-import { Gauge, Registry } from 'prom-client';
+import { Gauge, Registry, Summary } from 'prom-client';
 
 export interface QueueGauges {
   completed: Gauge;
@@ -7,6 +7,7 @@ export interface QueueGauges {
   delayed: Gauge;
   failed: Gauge;
   waiting: Gauge;
+  completeSummary: Summary;
 }
 
 export function makeGuages(statPrefix: string, registers: Registry[]): QueueGauges {
@@ -15,6 +16,12 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
       registers,
       name: `${statPrefix}completed`,
       help: 'Number of completed messages',
+      labelNames: ['queue', 'prefix'],
+    }),
+    completeSummary: new Summary({
+      registers,
+      name: `${statPrefix}complete_duration`,
+      help: 'Time to complete jobs',
       labelNames: ['queue', 'prefix'],
     }),
     active: new Gauge({
@@ -42,6 +49,16 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
       labelNames: ['queue', 'prefix'],
     }),
   };
+}
+
+export async function getJobCompleteStats(prefix: string, name: string, job: bull.Job, gauges: QueueGauges): Promise<void> {
+  // TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/31567
+  const jobData = job as any;
+  if (!jobData.finishedOn) {
+    return;
+  }
+  const duration = jobData.finishedOn - jobData.processedOn;
+  gauges.completeSummary.observe({ prefix, queue: name }, duration);
 }
 
 export async function getStats(prefix: string, name: string, queue: bull.Queue, gauges: QueueGauges): Promise<void> {

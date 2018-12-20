@@ -32,7 +32,6 @@
     "@types/bunyan": "^1.8.5",
     "@types/uuid": "^3.4.4",
     "@types/yargs": "^12.0.2",
-    "autobind-decorator": "^2.4.0",
     "bull": "^3.5.2",
     "bunyan": "^1.8.12",
     "express": "^4.16.4",
