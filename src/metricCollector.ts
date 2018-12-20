@@ -1,6 +1,7 @@
 import bull from 'bull';
 import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
 import { logger as globalLogger } from './logger';
@@ -67,6 +68,13 @@ export class MetricCollector {
   public async updateAll(): Promise<void> {
     const updatePromises = this.queues.map(q => getStats(q.prefix, q.name, q.queue, this.guages));
     await Promise.all(updatePromises);
+  }
+
+  public async ping(): Promise<void> {
+    await Promise.all(this.queues.map(async q => {
+      const client: Redis = (q.queue as any).client;
+      await client.ping();
+    }));
   }
 
   public async close(): Promise<void> {
