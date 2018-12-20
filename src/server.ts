@@ -56,14 +56,18 @@ export function makeServer(opts: Options): express.Application {
 
   });
 
-  app.get('/healthz', (_req: express.Request, res: express.Response) => {
-    res.send({
-      ok: true,
-    });
-  });
-
   const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
   collector.collectJobCompletions();
+
+  app.get('/healthz', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+    collector.ping()
+      .then(() => {
+        res.send({
+          ok: true,
+        });
+      })
+      .catch(err => next(err));
+  });
 
   app.get('/metrics', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     collector.updateAll()
