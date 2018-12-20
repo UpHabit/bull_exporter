@@ -1,3 +1,5 @@
+import * as bull from 'bull';
+
 import { getStats } from '../src/queueGauges';
 
 import { TestData } from './create.util';
@@ -47,8 +49,8 @@ it('should list 1 completed job', async () => {
     registry,
   } = testData;
 
-  queue.process(async job => {
-    expect(job).toMatchObject({ data: { a: 1 } });
+  queue.process(async (jobInner: bull.Job<unknown>) => {
+    expect(jobInner).toMatchObject({ data: { a: 1 } });
   });
   const job = await queue.add({ a: 1 });
   await job.finished();
@@ -67,8 +69,8 @@ it('should list 1 failed job', async () => {
     registry,
   } = testData;
 
-  queue.process(async job => {
-    expect(job).toMatchObject({ data: { a: 1 } });
+  queue.process(async (jobInner: bull.Job<unknown>) => {
+    expect(jobInner).toMatchObject({ data: { a: 1 } });
     throw new Error('expected');
   });
   const job = await queue.add({ a: 1 });
