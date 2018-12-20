@@ -63,6 +63,7 @@ export function makeServer(opts: Options): express.Application {
   });
 
   const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
+  collector.collectJobCompletions();
 
   app.get('/metrics', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     collector.updateAll()

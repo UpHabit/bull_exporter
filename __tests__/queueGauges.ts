@@ -1,6 +1,6 @@
 import * as bull from 'bull';
 
-import { getStats } from '../src/queueGauges';
+import { getJobCompleteStats, getStats } from '../src/queueGauges';
 
 import { TestData } from './create.util';
 import { getCurrentTestHash } from './setup.util';
@@ -56,6 +56,34 @@ it('should list 1 completed job', async () => {
   await job.finished();
 
   await getStats(prefix, name, queue, guages);
+  await getJobCompleteStats(prefix, name, job, guages);
+
+  expect(registry.metrics()).toMatchSnapshot();
+});
+
+it('should list 1 completed job with delay', async () => {
+  const {
+    name,
+    queue,
+    prefix,
+    guages,
+    registry,
+  } = testData;
+
+  queue.process(async (jobInner: bull.Job<unknown>) => {
+    expect(jobInner).toMatchObject({ data: { a: 1 } });
+  });
+  const job = await queue.add({ a: 1 });
+  await job.finished();
+
+  // TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/31567
+  // TODO: file bug with bull? finishedOn and processedOn are not set when we call finish
+  const doneJob: any = await queue.getJob(job.id);
+  // lie about job duration
+  doneJob.finishedOn = doneJob.processedOn + 1000;
+
+  await getStats(prefix, name, queue, guages);
+  await getJobCompleteStats(prefix, name, doneJob, guages);
 
   expect(registry.metrics()).toMatchSnapshot();
 });
