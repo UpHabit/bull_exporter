@@ -23,6 +23,8 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
       name: `${statPrefix}complete_duration`,
       help: 'Time to complete jobs',
       labelNames: ['queue', 'prefix'],
+      maxAgeSeconds: 300,
+      ageBuckets: 13,
     }),
     active: new Gauge({
       registers,
