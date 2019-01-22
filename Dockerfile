@@ -1,17 +1,20 @@
-FROM node:8-alpine as build-env
+FROM node:10-alpine as build-env
 
 RUN mkdir -p /src
 WORKDIR /src
 
 COPY package.json .
 COPY yarn.lock .
-
 RUN yarn install --pure-lockfile
+
 COPY . .
 RUN node_modules/.bin/tsc -p .
 RUN yarn install --pure-lockfile --production
 
-FROM node:8-alpine
+FROM node:10-alpine
+RUN apk --no-cahce add tini
+ENTRYPOINT ["/sbin/tini", "--"]
+
 RUN mkdir -p /src
 RUN chown -R nobody:nogroup /src
 WORKDIR /src

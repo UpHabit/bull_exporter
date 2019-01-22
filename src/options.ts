@@ -40,7 +40,6 @@ export function getOptionsFromArgs(...args: string[]): Options {
         description: 'Print stats and exit without starting a server',
       },
       port: {
-        alias: 'p',
         default: 5959,
       },
       bindAddress: {
