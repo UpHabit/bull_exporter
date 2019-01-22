@@ -703,15 +703,15 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
   integrity sha512-A2TAGbTFdBw9azHbpVd+/FkdW2T6msN1uct1O9bH3vTerEHKZhTXJUQXy+hNq1B0RagfU8U+KBdqiZpxjhOUQA==
 
-"@types/node@*":
-  version "10.12.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
-  integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
-
-"@types/node@8":
+"@types/node@*", "@types/node@8.10.39":
   version "8.10.39"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.39.tgz#e7e87ad00364dd7bc485c940926345b8ec1a26ca"
   integrity sha512-rE7fktr02J8ybFf6eysife+WF+L4sAHWzw09DgdCebEu+qDwMvv4zl6Bc+825ttGZP73kCKxa3dhJOoGJ8+5mA==
+
+"@types/node@10.12.18":
+  version "10.12.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
+  integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -1247,12 +1247,12 @@ builtin-modules@^1.0.0, builtin-modules@^1.1.1:
   resolved "https://registry.yarnpkg.com/builtin-modules/-/builtin-modules-1.1.1.tgz#270f076c5a72c02f5b65a47df94c5fe3a278892f"
   integrity sha1-Jw8HbFpywC9bZaR9+Uxf46J4iS8=
 
-bull@^3.5.3:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/bull/-/bull-3.5.3.tgz#fb299c3c21123aa619019e7d3c2be5e6fa02a64b"
-  integrity sha512-dnOn90Wq8K4mQFMAxK71/GNtkcNbs9SdXCFChpkVI57QigxljmDnr0C+Opy6Khlk1zAyMxYGrWX54zqdug8AtA==
+bull@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/bull/-/bull-3.6.0.tgz#9d137a4470d9f5a0df54801ca4390656e5054a42"
+  integrity sha512-705Vf3weiRr8D49/+lsPSxV/1NejhjfmVviv9qG2srIYPr7IS2euLwHa+2GNfaVDA2tmx8xyJFW9bPw3fPfHPg==
   dependencies:
-    cron-parser "^2.5.0"
+    cron-parser "^2.7.3"
     debuglog "^1.0.0"
     ioredis "^4.5.1"
     lodash "^4.17.11"
@@ -1519,7 +1519,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-cron-parser@^2.5.0:
+cron-parser@^2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/cron-parser/-/cron-parser-2.7.3.tgz#12603f89f5375af353a9357be2543d3172eac651"
   integrity sha512-t9Kc7HWBWPndBzvbdQ1YG9rpPRB37Tb/tTviziUOh1qs3TARGh3b1p+tnkOHNe1K5iI3oheBPgLqwotMM7+lpg==
@@ -5492,12 +5492,7 @@ typescript-estree@^18.1.0:
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-typescript@^3.0.3:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.2.tgz#fe8101c46aa123f8353523ebdcf5730c2ae493e5"
-  integrity sha512-VCj5UiSyHBjwfYacmDuc/NOk4QQixbE+Wn7MFJuS0nRuPQbof132Pw4u53dm264O8LPc2MVsc7RJNml5szurkg==
-
-typescript@^3.2.1, typescript@^3.2.4:
+typescript@3.2.4, typescript@^3.0.3, typescript@^3.2.1, typescript@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.4.tgz#c585cb952912263d915b462726ce244ba510ef3d"
   integrity sha512-0RNDbSdEokBeEAkgNbxJ+BLwSManFy9TeXz8uW+48j/xhEXv1ePME60olyzw2XzUqUBNAYFeJadIqAgNqIACwg==
