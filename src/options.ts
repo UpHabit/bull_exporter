@@ -14,34 +14,39 @@ export interface Options {
 
 export function getOptionsFromArgs(...args: string[]): Options {
   return yargs
-    .usage('prom-metrics [queueNames]')
-    .alias('V', 'version')
-
-    .alias('u', 'url')
-    .demandOption('url', 'A redis connection url')
-    .default('url', 'redis://127.0.0.1:6379')
-
-    .alias('p', 'prefix')
-    .demandOption('prefix', 'bull prefix')
-    .default('prefix', 'bull')
-
-    .alias('m', 'metric-prefix')
-    .demandOption('metric-prefix', 'Metric prefix')
-    .default('metric-prefix', 'uhapp_queue_')
-
-    .boolean('once')
-    .alias('n', 'once')
-    .demandOption('once', 'Print stats and exit without starting a server')
-    .default('once', false)
-
-    .number('port')
-    .default('port', 5959)
-
-    .alias('b', 'bindAddress')
-    .demandOption('bindAddress', 'Address to listen on')
-    .default('bindAddress', '0.0.0.0')
-
-    .demandCommand(1)
     .version(version)
-    .parse(args) as any;
+    .alias('V', 'version')
+    .options({
+      url: {
+        alias: 'u',
+        describe: 'A redis connection url',
+        default: 'redis://127.0.0.1:6379',
+        demandOption: true,
+      },
+      prefix: {
+        alias: 'p',
+        default: 'bull',
+        demandOption: true,
+      },
+      metricPrefix: {
+        alias: 'm',
+        default: 'bull_queue_',
+        defaultDescription: 'prefix for all exported metrics',
+        demandOption: true,
+      },
+      once: {
+        alias: 'n',
+        default: false,
+        description: 'Print stats and exit without starting a server',
+      },
+      port: {
+        alias: 'p',
+        default: 5959,
+      },
+      bindAddress: {
+        alias: 'b',
+        description: 'Address to listen on',
+        default: '0.0.0.0',
+      },
+    }).parse(args);
 }
