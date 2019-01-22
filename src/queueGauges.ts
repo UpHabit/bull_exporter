@@ -52,12 +52,10 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
 }
 
 export async function getJobCompleteStats(prefix: string, name: string, job: bull.Job, gauges: QueueGauges): Promise<void> {
-  // TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/31567
-  const jobData = job as any;
-  if (!jobData.finishedOn) {
+  if (!job.finishedOn) {
     return;
   }
-  const duration = jobData.finishedOn - jobData.processedOn;
+  const duration = job.finishedOn - job.processedOn!;
   gauges.completeSummary.observe({ prefix, queue: name }, duration);
 }
 
