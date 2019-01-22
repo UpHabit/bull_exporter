@@ -1,9 +1,9 @@
 {
-  "name": "bull-prom-metrics",
+  "name": "bull_exporter",
   "version": "0.0.1",
   "description": "Promethus Exporter for Bull Queues",
   "main": "dist/src/index.js",
-  "repository": "git@github.com:UpHabit/bull-prom-metrics.git",
+  "repository": "git@github.com:UpHabit/bull_exporter.git",
   "author": "Gabriel Castro <GabrielCastro@users.noreply.github.com>",
   "license": "UNLICENSED",
   "scripts": {
