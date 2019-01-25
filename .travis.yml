@@ -38,18 +38,24 @@ script:
 before_deploy:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin:$HOME/bin
+  - >
+    yarn global add
+    semantic-release
+    @semantic-release/changelog
+    @semantic-release/exec
+    @semantic-release/git
+    @semantic-release/github
+    @semantic-release/npm
 
 deploy:
-  # k8s development
-  - provider: script
-    skip_cleanup: true
-    'on':
-      branch: develop
-    script: bash -e ./setup/ci/travis_deploy.sh development
-
-  # k8s development
   - provider: script
     skip_cleanup: true
     'on':
       branch: master
-    script: bash -e ./setup/ci/travis_deploy.sh
+    script: npx semantic-release
+
+  - provider: script
+    skip_cleanup: true
+    'on':
+      branch: ci/semantic-release
+    script: npx semantic-release --branch ci/semantic-release --dry-run
