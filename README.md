@@ -7,9 +7,6 @@
   </a>
   <br/>
 </p>
-
-___
-
 <p align="center">
   <a href="https://prometheus.io/">
     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Prometheus_software_logo.svg/115px-Prometheus_software_logo.svg.png" height="115">
