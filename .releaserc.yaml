@@ -1,0 +1,16 @@
+repositoryUrl: git@github.com:UpHabit/bull_exporter.git
+branch: master
+dryRun: false
+debug: false
+plugins:
+  - '@semantic-release/commit-analyzer'
+  - '@semantic-release/release-notes-generator'
+  - '@semantic-release/changelog'
+  - - '@semantic-release/npm'
+    - npmPublish: false
+  - '@semantic-release/git'
+  - - '@semantic-release/exec'
+    # TODO: split this into prepare & publish
+    - successCmd: 'bash -e ./setup/ci/build_and_push.sh --push'
+  - - '@semantic-release/github'
+    - failComment: false
