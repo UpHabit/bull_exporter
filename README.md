@@ -1,6 +1,14 @@
 # Bull Queue Exporter
-
 **Prometheus exporter for Bull metrics.**
+
+<p align="right">
+  <a href="https://travis-ci.org/UpHabit/bull_exporter/branches/">
+    <img src="https://travis-ci.org/UpHabit/bull-prom-metrics.svg?branch=master"/>
+  </a>
+  <br/>
+</p>
+
+___
 
 <p align="center">
   <a href="https://prometheus.io/">
@@ -12,7 +20,6 @@
 </p>
 
 ___
-![TravisCI](https://travis-ci.com/UpHabit/bull-prom-metrics.svg?branch=master)
 
 ## Metrics
 
