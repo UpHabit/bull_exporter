@@ -89,7 +89,7 @@ metadata:
     role: exporter
   annotations:
     prometheus.io/scrape: 'true'
-    prometheus.io/port: '5959'
+    prometheus.io/port: '9538'
 spec:
   type: ClusterIP
   ports:
