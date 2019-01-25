@@ -13,6 +13,7 @@ branches:
     - master
     - develop
     - /^release\/.+/
+    - /^ci\/.+/
 
 services:
   - redis-server
