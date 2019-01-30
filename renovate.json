@@ -7,6 +7,7 @@
   },
   "timezone": "America/Toronto",
   "rebaseStalePrs": true,
+  "reviewers": ["GabrielCastro"],
   "schedule": [
     "after 9am and before 3pm",
     "every weekday"
