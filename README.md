@@ -1,7 +1,12 @@
 # Bull Queue Exporter
-
 **Prometheus exporter for Bull metrics.**
 
+<p align="right">
+  <a href="https://travis-ci.org/UpHabit/bull_exporter/branches/">
+    <img src="https://travis-ci.org/UpHabit/bull-prom-metrics.svg?branch=master"/>
+  </a>
+  <br/>
+</p>
 <p align="center">
   <a href="https://prometheus.io/">
     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Prometheus_software_logo.svg/115px-Prometheus_software_logo.svg.png" height="115">
@@ -12,7 +17,6 @@
 </p>
 
 ___
-![TravisCI](https://travis-ci.com/UpHabit/bull-prom-metrics.svg?branch=master)
 
 ## Metrics
 
@@ -85,7 +89,7 @@ metadata:
     role: exporter
   annotations:
     prometheus.io/scrape: 'true'
-    prometheus.io/port: '5959'
+    prometheus.io/port: '9538'
 spec:
   type: ClusterIP
   ports:
