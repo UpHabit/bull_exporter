@@ -16,7 +16,7 @@
     "@babel/preset-env": "7.3.1",
     "@babel/preset-typescript": "7.1.0",
     "@types/express": "4.16.1",
-    "@types/jest": "24.0.2",
+    "@types/jest": "24.0.6",
     "@types/node": "10.12.26",
     "jest": "24.1.0",
     "madge": "3.4.4",
