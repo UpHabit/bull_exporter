@@ -18,6 +18,10 @@
 
 ___
 
+
+## UI
+![Grafana Dashboard](./docs/img/grafana-1.png)
+
 ## Metrics
 
 | Metric                       | type    | description |
