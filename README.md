@@ -70,6 +70,23 @@ spec:
       containers:
         - name: bull-exporter
           image: uphabit/bull_exporter:latest
+          securityContext:
+            runAsGroup: 65534 # nobody
+            runAsUser: 65534 # nobody
+            runAsNonRoot: true
+            privileged: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - all
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128M
+            limits:
+              cpu: 200m
+              memory: 512M
           env:
               # space delimited list of queues
             - name: EXPORTER_QUEUES
@@ -81,7 +98,6 @@ spec:
 ---
 apiVersion: v1
 kind: Service
-
 metadata:
   name: bull-exporter
   labels:
