@@ -5,7 +5,9 @@
   "docker": {
     "enabled": false
   },
+  "lockFileMaintenance": { "enabled": true },
   "timezone": "America/Toronto",
+  "prHourlyLimit": 6,
   "rebaseStalePrs": true,
   "reviewers": ["GabrielCastro"],
   "schedule": [
