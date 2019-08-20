@@ -17,7 +17,7 @@
     "@babel/preset-typescript": "7.3.3",
     "@types/express": "4.17.1",
     "@types/jest": "24.0.18",
-    "@types/node": "10.14.15",
+    "@types/node": "10.14.16",
     "jest": "24.9.0",
     "madge": "3.4.4",
     "ts-jest": "24.0.2",
@@ -41,7 +41,7 @@
     "yargs": "^13.0.0"
   },
   "resolutions": {
-    "@types/node": "10.14.15",
+    "@types/node": "10.14.16",
     "typescript": "3.5.3"
   }
 }
