@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/UpHabit/bull_exporter/compare/v1.2.0...v1.2.1) (2019-08-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency yargs to v14 ([1014aff](https://github.com/UpHabit/bull_exporter/commit/1014aff))
+
 # [1.2.0](https://github.com/UpHabit/bull_exporter/compare/v1.1.0...v1.2.0) (2019-07-12)
 
 
