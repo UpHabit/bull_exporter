@@ -12,7 +12,7 @@ function calcDuration(start: [number, number]): number {
   return diff[0] * 1e3 + diff[1] * 1e-6;
 }
 
-export function makeServer(opts: Options): express.Application {
+export async function makeServer(opts: Options): Promise<express.Application> {
   const app = express();
   app.disable('x-powered-by');
 
@@ -27,7 +27,6 @@ export function makeServer(opts: Options): express.Application {
   });
 
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-
     const start = process.hrtime();
     const id = uuid();
     const reqLog = logger.child({
@@ -56,8 +55,28 @@ export function makeServer(opts: Options): express.Application {
 
   });
 
-  const collector = new MetricCollector(opts.metricPrefix, opts._, { redis: opts.url, prefix: opts.prefix });
+  const collector = new MetricCollector(opts._, {
+    logger,
+    metricPrefix: opts.metricPrefix,
+    redis: opts.url,
+    prefix: opts.prefix,
+    autoDiscover: opts.autoDiscover,
+  });
   collector.collectJobCompletions();
+
+  if (opts.autoDiscover) {
+    await collector.discoverAll();
+  }
+
+  app.post('/discover_queues', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+    collector.discoverAll()
+      .then(() => {
+        res.send({
+          ok: true,
+        });
+      })
+      .catch((err: any) => next(err));
+  });
 
   app.get('/healthz', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     collector.ping()
@@ -66,7 +85,7 @@ export function makeServer(opts: Options): express.Application {
           ok: true,
         });
       })
-      .catch(err => next(err));
+      .catch((err: any) => next(err));
   });
 
   app.get('/metrics', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -89,7 +108,7 @@ export function makeServer(opts: Options): express.Application {
 }
 
 export async function startServer(opts: Options): Promise<{ done: Promise<void> }> {
-  const app = makeServer(opts);
+  const app = await makeServer(opts);
 
   let server: http.Server;
   await new Promise((resolve, reject) => {

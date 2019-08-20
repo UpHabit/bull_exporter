@@ -32,6 +32,11 @@ To learn more about how to setup promethues and grafana see: https://eksworkshop
 The dashboard pictured above is [available to download from grafana](https://grafana.com/grafana/dashboards/10128).
 It will work aslong as EXPORTER_STAT_PREFIX is not changed.
 
+## Queue Discovery
+Queues are discovered at start up by running `KEYS bull:*:id` 
+this can also be triggered manually from the `/discover_queues` endpoint
+`curl -xPOST localhost:9538/discover_queues`
+
 ## Metrics
 
 | Metric                       | type    | description |
@@ -47,12 +52,13 @@ It will work aslong as EXPORTER_STAT_PREFIX is not changed.
 
 ### Environment variables for default docker image
 
-| variable             | default                  | description                                |
-|----------------------|--------------------------|--------------------------------------------|
-| EXPORTER_REDIS_URL   | redis://localhost:6379/0 | Redis uri to connect                       |
-| EXPORTER_PREFIX      | bull                     | prefix for queues                          |
-| EXPORTER_STAT_PREFIX | bull_queue_              | prefix for exported metrics                |
-| EXPORTER_QUEUES      | -                        | a space separated list of queues to check  |
+| variable              | default                  | description                                     |
+|-----------------------|--------------------------|-------------------------------------------------|
+| EXPORTER_REDIS_URL    | redis://localhost:6379/0 | Redis uri to connect                            |
+| EXPORTER_PREFIX       | bull                     | prefix for queues                               |
+| EXPORTER_STAT_PREFIX  | bull_queue_              | prefix for exported metrics                     |
+| EXPORTER_QUEUES       | -                        | a space separated list of queues to check       |
+| EXPORTER_AUTODISCOVER | -                        | set to '0' or 'false' to disable queue discovery|
 
 
 ### Example deployment

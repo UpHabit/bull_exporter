@@ -1,14 +1,17 @@
 import bull from 'bull';
 import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
-import { Redis } from 'ioredis';
+import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
 import { logger as globalLogger } from './logger';
 import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
 
-export interface BullOptions extends Pick<bull.QueueOptions, Exclude<keyof bull.QueueOptions, 'redis'>> {
-  redis?: string | bull.QueueOptions['redis'];
+export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
+  metricPrefix: string;
+  redis: string;
+  autoDiscover: boolean;
+  logger: Logger;
 }
 
 export interface QueueData<T = unknown> {
@@ -21,27 +24,66 @@ export class MetricCollector {
 
   private readonly logger: Logger;
 
-  private readonly queues: QueueData<unknown>[];
+  private readonly defaultRedisClient: IoRedis.Redis;
+  private readonly redisUri: string;
+  private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
+  private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
+
+  private get queues(): QueueData<unknown>[] {
+    return [...this.queuesByName.values()];
+  }
 
   private readonly myListeners: Set<(id: string) => Promise<void>> = new Set();
 
   private readonly guages: QueueGauges;
 
   constructor(
-    statPrefix: string,
     queueNames: string[],
-    opts: BullOptions & { logger?: Logger },
+    opts: MetricCollectorOptions,
     registers: Registry[] = [globalRegister],
   ) {
-    const { logger, ...bullOpts } = opts;
+    const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
+    this.redisUri = redis;
+    this.defaultRedisClient = new IoRedis(this.redisUri);
+    this.defaultRedisClient.setMaxListeners(32);
+    this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
-    this.queues = queueNames.map(name => ({
-      name,
-      queue: new bull(name, bullOpts as bull.QueueOptions),
-      prefix: opts.prefix || 'bull',
-    }));
+    this.addToQueueSet(queueNames);
+    this.guages = makeGuages(metricPrefix, registers);
+  }
 
-    this.guages = makeGuages(statPrefix, registers);
+  private createClient(_type: 'client' | 'subscriber' | 'bclient', redisOpts?: IoRedis.RedisOptions): IoRedis.Redis {
+    if (_type === 'client') {
+      return this.defaultRedisClient!;
+    }
+    return new IoRedis(this.redisUri, redisOpts);
+  }
+
+  private addToQueueSet(names: string[]): void {
+    for (const name of names) {
+      if (this.queuesByName.has(name)) {
+        continue;
+      }
+      this.logger.info('added queue', name);
+      this.queuesByName.set(name, {
+        name,
+        queue: new bull(name, {
+          ...this.bullOpts,
+          createClient: this.createClient.bind(this),
+        }),
+        prefix: this.bullOpts.prefix || 'bull',
+      });
+    }
+  }
+
+  public async discoverAll(): Promise<void> {
+    this.logger.info('running queue discovery');
+    let keys = await this.defaultRedisClient.keys(`${this.bullOpts.prefix}:*:id`);
+    keys = keys.map(k => k
+      .replace(new RegExp(`^${this.bullOpts.prefix}:`), '')
+      .replace(/:id$/, ''),
+    );
+    this.addToQueueSet(keys);
   }
 
   private async onJobComplete(queue: QueueData, id: string): Promise<void> {
@@ -71,13 +113,11 @@ export class MetricCollector {
   }
 
   public async ping(): Promise<void> {
-    await Promise.all(this.queues.map(async q => {
-      const client: Redis = (q.queue as any).client;
-      await client.ping();
-    }));
+    await this.defaultRedisClient.ping();
   }
 
   public async close(): Promise<void> {
+    this.defaultRedisClient.disconnect();
     for (const q of this.queues) {
       for (const l of this.myListeners) {
         (q.queue as any as EventEmitter).removeListener('global:completed', l);

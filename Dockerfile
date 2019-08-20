@@ -12,7 +12,7 @@ RUN node_modules/.bin/tsc -p .
 RUN yarn install --pure-lockfile --production
 
 FROM node:10-alpine
-RUN apk --no-cache add tini
+RUN apk --no-cache add tini bash
 ENTRYPOINT ["/sbin/tini", "--"]
 
 RUN mkdir -p /src
