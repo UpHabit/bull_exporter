@@ -22,6 +22,16 @@ ___
 ## UI
 ![Grafana Dashboard](./docs/img/grafana-1.png)
 
+## Setup
+#### Prometheus
+**An existing prometheus server is required to use this project**
+
+To learn more about how to setup promethues and grafana see: https://eksworkshop.com/monitoring/
+
+#### Grafana
+The dashboard pictured above is [available to download from grafana](https://grafana.com/grafana/dashboards/10128).
+It will work aslong as EXPORTER_STAT_PREFIX is not changed.
+
 ## Metrics
 
 | Metric                       | type    | description |
