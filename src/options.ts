@@ -9,6 +9,7 @@ export interface Options {
   once: boolean;
   port: number;
   bindAddress: string;
+  autoDiscover: boolean;
   _: string[];
 }
 
@@ -37,10 +38,16 @@ export function getOptionsFromArgs(...args: string[]): Options {
       once: {
         alias: 'n',
         default: false,
+        type: 'boolean',
         description: 'Print stats and exit without starting a server',
       },
       port: {
         default: 9538,
+      },
+      autoDiscover: {
+        default: false,
+        alias: 'a',
+        type: 'boolean',
       },
       bindAddress: {
         alias: 'b',
