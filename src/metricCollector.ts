@@ -77,13 +77,21 @@ export class MetricCollector {
   }
 
   public async discoverAll(): Promise<void> {
-    this.logger.info('running queue discovery');
-    let keys = await this.defaultRedisClient.keys(`${this.bullOpts.prefix}:*:id`);
-    keys = keys.map(k => k
-      .replace(new RegExp(`^${this.bullOpts.prefix}:`), '')
-      .replace(/:id$/, ''),
-    );
-    this.addToQueueSet(keys);
+    const keyPattern = new RegExp(`^${this.bullOpts.prefix}:([^:]+):(id|failed|active|waiting|stalled-check)$`);
+    this.logger.info({ pattern: keyPattern.source }, 'running queue discovery');
+
+    const keyStream = this.defaultRedisClient.scanStream({
+      match: `${this.bullOpts.prefix}:*:*`,
+    });
+    // tslint:disable-next-line:await-promise tslint does not like Readable's here
+    for await (const keyChunk of keyStream) {
+      for (const key of keyChunk) {
+        const match = keyPattern.exec(key);
+        if (match && match[1]) {
+          this.addToQueueSet([match[1]]);
+        }
+      }
+    }
   }
 
   private async onJobComplete(queue: QueueData, id: string): Promise<void> {
