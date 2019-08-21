@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/UpHabit/bull_exporter/compare/v1.2.1...v1.3.0) (2019-08-21)
+
+
+### Features
+
+* add queue discovery ([1afb598](https://github.com/UpHabit/bull_exporter/commit/1afb598))
+
 ## [1.2.1](https://github.com/UpHabit/bull_exporter/compare/v1.2.0...v1.2.1) (2019-08-20)
 
 
