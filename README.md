@@ -35,7 +35,7 @@ It will work aslong as EXPORTER_STAT_PREFIX is not changed.
 ## Queue Discovery
 Queues are discovered at start up by running `KEYS bull:*:id` 
 this can also be triggered manually from the `/discover_queues` endpoint
-`curl -xPOST localhost:9538/discover_queues`
+`curl -XPOST localhost:9538/discover_queues`
 
 ## Metrics
 
