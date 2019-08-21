@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/UpHabit/bull_exporter/compare/v1.3.0...v1.3.1) (2019-08-21)
+
+
+### Bug Fixes
+
+* add more patterns to match for queue discovery ([285a263](https://github.com/UpHabit/bull_exporter/commit/285a263))
+
 # [1.3.0](https://github.com/UpHabit/bull_exporter/compare/v1.2.1...v1.3.0) (2019-08-21)
 
 
