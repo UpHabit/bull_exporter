@@ -12,9 +12,9 @@
     "test": "jest --ci"
   },
   "devDependencies": {
-    "@babel/core": "7.5.5",
-    "@babel/preset-env": "7.5.5",
-    "@babel/preset-typescript": "7.3.3",
+    "@babel/core": "7.6.4",
+    "@babel/preset-env": "7.6.3",
+    "@babel/preset-typescript": "7.6.0",
     "@types/express": "4.17.1",
     "@types/jest": "24.0.19",
     "@types/node": "10.14.16",
