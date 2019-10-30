@@ -1,0 +1,55 @@
+version: 2.0
+
+jobs:
+  checkout_code_with_deps:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/src
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-deps-main-{{ checksum "yarn.lock" }}
+      - run: yarn install --pure-lockfile
+      - save_cache:
+          key: npm-deps-main-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/src/node_modules
+      - save_cache:
+          key: repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/src/
+
+  lint:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/src
+    steps:
+      - restore_cache:
+          keys:
+            - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
+      - run: yarn run lint
+
+  test:
+    docker:
+      - image: circleci/node:12
+      - image: circleci/redis
+    working_directory: ~/src
+    steps:
+      - restore_cache:
+          keys:
+            - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
+      - run: yarn run build
+      - run: yarn run test
+
+workflows:
+  version: 2
+  all:
+    jobs:
+      - checkout_code_with_deps
+      - lint:
+          requires:
+            - checkout_code_with_deps
+      - test:
+          requires:
+            - checkout_code_with_deps
