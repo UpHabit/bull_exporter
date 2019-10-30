@@ -62,11 +62,12 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
   });
-  collector.collectJobCompletions();
 
   if (opts.autoDiscover) {
     await collector.discoverAll();
   }
+
+  collector.collectJobCompletions();
 
   app.post('/discover_queues', (_req: express.Request, res: express.Response, next: express.NextFunction) => {
     collector.discoverAll()
