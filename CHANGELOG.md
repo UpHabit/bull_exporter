@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/UpHabit/bull_exporter/compare/v1.3.2...v1.3.3) (2019-10-30)
+
+
+### Bug Fixes
+
+* lock file maintenance ([96b0310](https://github.com/UpHabit/bull_exporter/commit/96b031098fc97c0714643410a9f362b8bc8bd965))
+
 ## [1.3.2](https://github.com/UpHabit/bull_exporter/compare/v1.3.1...v1.3.2) (2019-10-30)
 
 
