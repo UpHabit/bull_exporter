@@ -1,6 +1,6 @@
 {
   "name": "bull_exporter",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Promethus Exporter for Bull Queues",
   "main": "dist/src/index.js",
   "repository": "git@github.com:UpHabit/bull_exporter.git",

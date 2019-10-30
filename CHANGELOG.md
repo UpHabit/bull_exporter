@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/UpHabit/bull_exporter/compare/v1.3.1...v1.3.2) (2019-10-30)
+
+
+### Bug Fixes
+
+* call collectJobCompletions after discover ([2e57d79](https://github.com/UpHabit/bull_exporter/commit/2e57d79ad7435ebdfdd4fd23979601fed0a60b22))
+
 ## [1.3.1](https://github.com/UpHabit/bull_exporter/compare/v1.3.0...v1.3.1) (2019-08-21)
 
 
