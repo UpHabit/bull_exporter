@@ -9,26 +9,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - npm-deps-main-{{ checksum "yarn.lock" }}
+            - npmdeps-{{ checksum "yarn.lock" }}
       - run: yarn install --pure-lockfile
       - save_cache:
-          key: npm-deps-main-{{ checksum "yarn.lock" }}
+          key: npmdeps-{{ checksum "yarn.lock" }}
           paths:
             - ~/src/node_modules
       - save_cache:
           key: repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/src/
-
-  lint:
-    docker:
-      - image: circleci/node:12
-    working_directory: ~/src
-    steps:
-      - restore_cache:
-          keys:
-            - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
-      - run: yarn run lint
 
   test:
     docker:
@@ -39,17 +29,42 @@ jobs:
       - restore_cache:
           keys:
             - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
+      - run: yarn run lint
       - run: yarn run build
       - run: yarn run test
+
+  deploy:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/src
+    steps:
+      - restore_cache:
+          keys:
+            - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
+      - run: >
+          yarn global add
+            semantic-release
+            @semantic-release/changelog
+            @semantic-release/exec
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/npm
+      - run: npx semantic-release --dry-run
 
 workflows:
   version: 2
   all:
     jobs:
-      - checkout_code_with_deps
-      - lint:
-          requires:
-            - checkout_code_with_deps
+      - checkout_code_with_deps:
+          filters:
+            branches:
+              only:
+                - master
+                - /^circleci\/.*/
       - test:
           requires:
             - checkout_code_with_deps
+
+      - deploy:
+          requires:
+            - test
