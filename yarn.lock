@@ -3650,10 +3650,10 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-madge@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/madge/-/madge-3.5.0.tgz#04c30de311b885c5148ca376fe5a4e7488148846"
-  integrity sha512-zi60Lvq1Mx4ORzUZg8GrB4Aw6B91FDzvS+oSahshZY2lfFWI5o9xTyIkF81mIHJ9BsqKoZSnwi/uykXSXUNZcg==
+madge@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/madge/-/madge-3.5.1.tgz#7ede4237c11954e5121fe0424e5b98b2720cc819"
+  integrity sha512-xPgppbKQh2ClXlad5fllT1nvrVegEcxEHugxBDi/mHJ4RBc7PP1QFdBRiLwbTEU4YkBnQZO8IjkB1WYnrslnBw==
   dependencies:
     chalk "^2.4.1"
     commander "^2.15.1"
