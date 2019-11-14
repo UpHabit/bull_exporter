@@ -13,6 +13,7 @@ export async function printOnce(opts: Options): Promise<void> {
     logger,
     metricPrefix: opts.metricPrefix,
     redis: opts.url,
+    tlsOptions: opts.tls,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
   });

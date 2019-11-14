@@ -59,6 +59,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     logger,
     metricPrefix: opts.metricPrefix,
     redis: opts.url,
+    tlsOptions: opts.tls,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
   });

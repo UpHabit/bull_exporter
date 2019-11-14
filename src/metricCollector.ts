@@ -3,6 +3,8 @@ import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
 import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
+import tls = require('tls');
+import { URL } from 'url';
 
 import { logger as globalLogger } from './logger';
 import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
@@ -10,6 +12,7 @@ import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueG
 export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
   metricPrefix: string;
   redis: string;
+  tlsOptions: string;
   autoDiscover: boolean;
   logger: Logger;
 }
@@ -26,6 +29,7 @@ export class MetricCollector {
 
   private readonly defaultRedisClient: IoRedis.Redis;
   private readonly redisUri: string;
+  private readonly tlsOptions: string;
   private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
 
@@ -42,9 +46,10 @@ export class MetricCollector {
     opts: MetricCollectorOptions,
     registers: Registry[] = [globalRegister],
   ) {
-    const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
+    const { logger, autoDiscover, redis, tlsOptions, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
-    this.defaultRedisClient = new IoRedis(this.redisUri);
+    this.tlsOptions = tlsOptions;
+    this.defaultRedisClient = new IoRedis(this.createRedisOpts(this.redisUri, this.tlsOptions));
     this.defaultRedisClient.setMaxListeners(32);
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
@@ -52,10 +57,33 @@ export class MetricCollector {
     this.guages = makeGuages(metricPrefix, registers);
   }
 
+  private createRedisOpts(redisUri: string, tlsOptions: string): IoRedis.RedisOptions {
+    return {
+      ...this.parseRedisURL(redisUri),
+      tls: this.parseTlsOptions(tlsOptions),
+    };
+  }
+
+  private parseRedisURL(url: string): IoRedis.RedisOptions {
+    const parsedURL = new URL(url);
+
+    return {
+      host: parsedURL.hostname || 'localhost',
+      port: Number(parsedURL.port || 6379),
+      db: parseInt((parsedURL.pathname || '/0').substr(1), 10) || 0,
+      password: parsedURL.password ? decodeURIComponent(parsedURL.password) : undefined,
+    };
+  }
+
+  private parseTlsOptions(tlsOptions: string): tls.ConnectionOptions {
+    return tlsOptions ? JSON.parse(Buffer.from(tlsOptions, 'base64').toString()) : null;
+  }
+
   private createClient(_type: 'client' | 'subscriber' | 'bclient', redisOpts?: IoRedis.RedisOptions): IoRedis.Redis {
     if (_type === 'client') {
       return this.defaultRedisClient!;
     }
+
     return new IoRedis(this.redisUri, redisOpts);
   }
 

@@ -4,6 +4,7 @@ import { version } from '../package.json';
 
 export interface Options {
   url: string;
+  tls: string;
   prefix: string;
   metricPrefix: string;
   once: boolean;
@@ -23,6 +24,12 @@ export function getOptionsFromArgs(...args: string[]): Options {
         describe: 'A redis connection url',
         default: 'redis://127.0.0.1:6379',
         demandOption: true,
+      },
+      tls: {
+        alias: 't',
+        describe: 'A base64 endoded JSON string of TLS options (https://github.com/luin/ioredis#tls-options)',
+        default: '',
+        demandOption: false,
       },
       prefix: {
         alias: 'p',
