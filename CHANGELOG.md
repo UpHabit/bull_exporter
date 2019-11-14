@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/UpHabit/bull_exporter/compare/v1.3.3...v1.3.4) (2019-11-14)
+
+
+### Bug Fixes
+
+* dependency updates ([b645a3e](https://github.com/UpHabit/bull_exporter/commit/b645a3e4b9921743aeb6921ac780c1cc76ecc47b))
+
 ## [1.3.3](https://github.com/UpHabit/bull_exporter/compare/v1.3.2...v1.3.3) (2019-10-30)
 
 
