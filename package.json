@@ -38,7 +38,7 @@
     "prom-client": "^11.2.1",
     "tslib": "^1.9.3",
     "uuid": "^3.3.2",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.0"
   },
   "resolutions": {
     "@types/node": "10.17.9",
