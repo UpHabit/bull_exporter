@@ -41,14 +41,14 @@ jobs:
       - restore_cache:
           keys:
             - repo-with-deps-{{ .Environment.CIRCLE_SHA1 }}
-      - run: >
-          yarn global add
-            semantic-release
-            @semantic-release/changelog
-            @semantic-release/exec
-            @semantic-release/git
-            @semantic-release/github
-            @semantic-release/npm
+      - run: |
+          yarn global add \
+            semantic-release \
+            @semantic-release/changelog \
+            @semantic-release/exec \
+            @semantic-release/git \
+            @semantic-release/github \
+            @semantic-release/npm \
       - run: npx semantic-release --dry-run
 
 workflows:
