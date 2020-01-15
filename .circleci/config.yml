@@ -50,7 +50,7 @@ jobs:
             @semantic-release/github \
             @semantic-release/npm
       - run: |
-          PATH="$PATH:$(yarn bin)"
+          PATH="$PATH:$(yarn global bin)"
           semantic-release --dry-run
 
 workflows:
