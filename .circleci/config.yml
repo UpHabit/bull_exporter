@@ -48,8 +48,10 @@ jobs:
             @semantic-release/exec \
             @semantic-release/git \
             @semantic-release/github \
-            @semantic-release/npm \
-      - run: npx semantic-release --dry-run
+            @semantic-release/npm
+      - run: |
+          PATH="$PATH:$(yarn bin)"
+          semantic-release --dry-run
 
 workflows:
   version: 2
