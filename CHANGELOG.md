@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/UpHabit/bull_exporter/compare/v1.3.5...v1.3.6) (2020-01-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @types/yargs to v15 ([8919b5a](https://github.com/UpHabit/bull_exporter/commit/8919b5a6e4122b9a3a05f657393b85b149d56370))
+
 ## [1.3.5](https://github.com/UpHabit/bull_exporter/compare/v1.3.4...v1.3.5) (2019-12-19)
 
 
