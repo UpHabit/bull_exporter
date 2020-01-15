@@ -31,14 +31,14 @@
     "@types/bull": "^3.5.4",
     "@types/bunyan": "^1.8.5",
     "@types/uuid": "^3.4.4",
-    "@types/yargs": "^13.0.0",
+    "@types/yargs": "^15.0.0",
     "bull": "^3.6.0",
     "bunyan": "^1.8.12",
     "express": "^4.16.4",
     "prom-client": "^11.2.1",
     "tslib": "^1.9.3",
     "uuid": "^3.3.2",
-    "yargs": "^15.0.0"
+    "yargs": "^15.1.0"
   },
   "resolutions": {
     "@types/node": "10.17.11",
