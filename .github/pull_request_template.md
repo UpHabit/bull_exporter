@@ -27,6 +27,8 @@ The following files should not change unless they are directly a part of your ch
    - [ ] `yarn.lock` (unless package.json is also modified, then only the new/updated package should be changed here)
    
    - [ ] `package.json` (renovate bot should handle all routine updates)
+
+   - [ ] `package-lock.json` (Should not exist as this project uses yarn)
    
    - [ ] `tsconfig.json` (only make it stricter, making it more lenient requires more discussion)
    
