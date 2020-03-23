@@ -18,7 +18,7 @@
     "@types/express": "4.17.2",
     "@types/jest": "24.9.0",
     "@types/node": "10.17.13",
-    "jest": "24.9.0",
+    "jest": "25.1.0",
     "madge": "3.6.0",
     "ts-jest": "24.3.0",
     "tslint": "5.20.1",
@@ -41,6 +41,10 @@
     "yargs": "^15.1.0"
   },
   "resolutions": {
+    "acorn": ">=7.1.1",
+    "kind-of": ">=6.0.3",
+    "mkdirp": "^0.5.3",
+    "minimist": ">=1.2.5",
     "@types/node": "10.17.13",
     "typescript": "3.7.4"
   }
