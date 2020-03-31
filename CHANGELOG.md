@@ -1,3 +1,10 @@
+## [1.3.7](https://github.com/UpHabit/bull_exporter/compare/v1.3.6...v1.3.7) (2020-03-31)
+
+
+### Bug Fixes
+
+* **security:** Upgrade dependencies to fix security issues ([5c564be](https://github.com/UpHabit/bull_exporter/commit/5c564bec1bf4697e368313f4dcaa6a9e81faf1af))
+
 ## [1.3.6](https://github.com/UpHabit/bull_exporter/compare/v1.3.5...v1.3.6) (2020-01-15)
 
 
