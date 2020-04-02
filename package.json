@@ -21,7 +21,7 @@
     "jest": "25.1.0",
     "madge": "3.6.0",
     "ts-jest": "24.3.0",
-    "tslint": "5.20.1",
+    "tslint": "6.1.1",
     "tslint-config-airbnb": "5.11.2",
     "tslint-eslint-rules": "5.4.0",
     "tslint-microsoft-contrib": "6.2.0",
