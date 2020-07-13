@@ -1,3 +1,10 @@
+## [1.3.8](https://github.com/UpHabit/bull_exporter/compare/v1.3.7...v1.3.8) (2020-07-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency uuid to v8 ([557efe7](https://github.com/UpHabit/bull_exporter/commit/557efe77d22d4e79ea83659cd54a4efe22e8c983))
+
 ## [1.3.7](https://github.com/UpHabit/bull_exporter/compare/v1.3.6...v1.3.7) (2020-03-31)
 
 
