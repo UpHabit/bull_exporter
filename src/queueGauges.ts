@@ -1,13 +1,14 @@
 import bull from 'bull';
 import { Gauge, Registry, Summary } from 'prom-client';
 
+type LabelsT = 'queue' | 'prefix';
 export interface QueueGauges {
-  completed: Gauge;
-  active: Gauge;
-  delayed: Gauge;
-  failed: Gauge;
-  waiting: Gauge;
-  completeSummary: Summary;
+  completed: Gauge<LabelsT>;
+  active: Gauge<LabelsT>;
+  delayed: Gauge<LabelsT>;
+  failed: Gauge<LabelsT>;
+  waiting: Gauge<LabelsT>;
+  completeSummary: Summary<LabelsT>;
 }
 
 export function makeGuages(statPrefix: string, registers: Registry[]): QueueGauges {
