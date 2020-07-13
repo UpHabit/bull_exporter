@@ -17,7 +17,7 @@
   ],
   "packageRules": [{
     "groupName": "jest",
-    "packageNames": ["@types/jest", "@types/expect"],
+    "packageNames": ["@types/jest", "@types/expect", "ts-jest"],
     "sourceUrlPrefixes": [
       "https://github.com/facebook/jest"
     ]
