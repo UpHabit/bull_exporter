@@ -14,5 +14,12 @@
   "schedule": [
     "after 9am and before 3pm",
     "every weekday"
+  ],
+  "packageRules": [{
+    "groupName": "jest",
+    "packageNames": ["@types/jest", "@types/expect"],
+    "sourceUrlPrefixes": [
+      "https://github.com/facebook/jest"
+    ]
   ]
 }
