@@ -1,8 +1,7 @@
 {
   "extends": [
     "config:base",
-    "group:allNonMajor",
-    
+    "group:allNonMajor"
   ],
   "docker": {
     "enabled": false
