@@ -18,7 +18,7 @@
     "@types/express": "4.17.7",
     "@types/jest": "24.9.1",
     "@types/node": "10.17.27",
-    "jest": "25.5.4",
+    "jest": "26.1.0",
     "madge": "3.9.2",
     "ts-jest": "24.3.0",
     "tslint": "5.20.1",
