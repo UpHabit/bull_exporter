@@ -16,7 +16,7 @@
     "every weekday"
   ],
   "packageRules": [{
-    "groupName": "jest",
+    "groupName": "jest monorepo",
     "packageNames": ["@types/jest", "@types/expect", "ts-jest"],
     "sourceUrlPrefixes": [
       "https://github.com/facebook/jest"
