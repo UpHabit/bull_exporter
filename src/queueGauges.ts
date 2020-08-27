@@ -9,6 +9,7 @@ export interface QueueGauges {
   failed: Gauge<LabelsT>;
   waiting: Gauge<LabelsT>;
   completeSummary: Summary<LabelsT>;
+  completedCount: Gauge<LabelsT>;
 }
 
 export function makeGuages(statPrefix: string, registers: Registry[]): QueueGauges {
@@ -26,6 +27,12 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
       labelNames: ['queue', 'prefix'],
       maxAgeSeconds: 300,
       ageBuckets: 13,
+    }),
+    completedCount: new Gauge({
+      registers,
+      name: `${statPrefix}completed_count`,
+      help: 'Count complete jobs',
+      labelNames: ['queue', 'prefix'],
     }),
     active: new Gauge({
       registers,
@@ -60,6 +67,7 @@ export async function getJobCompleteStats(prefix: string, name: string, job: bul
   }
   const duration = job.finishedOn - job.processedOn!;
   gauges.completeSummary.observe({ prefix, queue: name }, duration);
+  gauges.completedCount.inc({ prefix, queue: name }, 1);
 }
 
 export async function getStats(prefix: string, name: string, queue: bull.Queue, gauges: QueueGauges): Promise<void> {
