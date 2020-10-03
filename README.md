@@ -9,7 +9,7 @@
 </p>
 <p align="center">
   <a href="https://prometheus.io/">
-    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/38/Prometheus_software_logo.svg/115px-Prometheus_software_logo.svg.png" height="115">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Prometheus_software_logo.svg/115px-Prometheus_software_logo.svg.png" height="115">
   </a>
   <a href="https://github.com/OptimalBits/bull">
     <img src="https://github.com/OptimalBits/bull/blob/develop/support/logo@2x.png" height="115" />
