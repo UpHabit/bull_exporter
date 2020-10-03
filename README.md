@@ -137,3 +137,9 @@ spec:
     role: exporter
 
 ```
+
+## Docker-compose Usage
+
+The variables are the same as in the Kubernetes part.
+
+see: [docker-compose-sample.yaml](./docs/docker-compose-sample.yaml) for an example.
