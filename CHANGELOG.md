@@ -1,3 +1,10 @@
+## [1.3.9](https://github.com/UpHabit/bull_exporter/compare/v1.3.8...v1.3.9) (2020-10-05)
+
+
+### Bug Fixes
+
+* Prometheus image link is broken ([743e98d](https://github.com/UpHabit/bull_exporter/commit/743e98dbe4a58d58804d99d7a96b3e2f584be9b2))
+
 ## [1.3.8](https://github.com/UpHabit/bull_exporter/compare/v1.3.7...v1.3.8) (2020-07-13)
 
 
