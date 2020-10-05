@@ -1,0 +1,10 @@
+version: '3'
+services:
+  bullq-exporter:
+    image: uphabit/bull_exporter:latest
+    container_name: bullq-exporter
+    environment:
+      - EXPORTER_QUEUES="mail job_one video audio"
+      - EXPORTER_REDIS_URL="redis://redis:6379/0"
+    ports:
+      - 5959:5959
