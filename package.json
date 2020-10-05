@@ -43,7 +43,7 @@
   "resolutions": {
     "acorn": ">=7.1.1",
     "kind-of": ">=6.0.3",
-    "mkdirp": "^0.5.3",
+    "mkdirp": "^1.0.0",
     "minimist": ">=1.2.5",
     "@types/node": "10.17.27",
     "typescript": "3.9.6"
