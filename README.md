@@ -26,7 +26,7 @@ ___
 #### Prometheus
 **An existing prometheus server is required to use this project**
 
-To learn more about how to setup promethues and grafana see: https://eksworkshop.com/monitoring/
+To learn more about how to setup prometheus and grafana see: https://eksworkshop.com/monitoring/
 
 #### Grafana
 The dashboard pictured above is [available to download from grafana](https://grafana.com/grafana/dashboards/10128).
