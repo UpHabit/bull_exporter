@@ -1,6 +1,11 @@
 import * as bull from 'bull';
 
-import { getJobCompleteStats, getStats } from '../src/queueGauges';
+import {
+  getJobCompleteStats,
+  getStats,
+  incrementJobTotalCompletedCounter,
+  incrementJobTotalFailedCounter
+} from '../src/queueGauges';
 
 import { TestData } from './create.util';
 import { getCurrentTestHash } from './setup.util';
@@ -57,6 +62,8 @@ it('should list 1 completed job', async () => {
 
   await getStats(prefix, name, queue, guages);
   await getJobCompleteStats(prefix, name, job, guages);
+  await incrementJobTotalCompletedCounter(prefix, name, guages);
+
 
   expect(registry.metrics()).toMatchSnapshot();
 });
@@ -106,6 +113,8 @@ it('should list 1 failed job', async () => {
   await expect(job.finished()).rejects.toThrow(/expected/);
 
   await getStats(prefix, name, queue, guages);
+
+  await incrementJobTotalFailedCounter(prefix, name, guages);
 
   expect(registry.metrics()).toMatchSnapshot();
 });
