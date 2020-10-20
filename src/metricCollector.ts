@@ -27,6 +27,12 @@ export interface QueueData<T = unknown> {
   prefix: string;
 }
 
+interface QueueListener {
+  queue: QueueData<unknown>;
+  event: string;
+  callback: any;
+}
+
 export class MetricCollector {
 
   private readonly logger: Logger;
@@ -40,8 +46,9 @@ export class MetricCollector {
     return [...this.queuesByName.values()];
   }
 
-  private readonly jobCompletedListeners: Set<(id: string) => Promise<void>> = new Set();
-  private readonly jobFailedListeners: Set<(id: string) => Promise<void>> = new Set();
+  private readonly queueListeners: Set<QueueListener> = new Set();
+  private readonly queueRedisClients: Set<IoRedis.Redis> = new Set();
+
 
   private readonly guages: QueueGauges;
 
@@ -64,7 +71,9 @@ export class MetricCollector {
     if (_type === 'client') {
       return this.defaultRedisClient!;
     }
-    return new IoRedis(this.redisUri, redisOpts);
+    const redisClient = new IoRedis(this.redisUri, redisOpts);
+    this.queueRedisClients.add(redisClient);
+    return redisClient;
   }
 
   private addToQueueSet(names: string[]): void {
@@ -127,11 +136,11 @@ export class MetricCollector {
   public collectJobCompletions(): void {
     for (const q of this.queues) {
       const onJobCompleteCallback = this.onJobComplete.bind(this, q);
-      this.jobCompletedListeners.add(onJobCompleteCallback);
+      this.queueListeners.add({ queue: q, event: 'global:completed', callback: onJobCompleteCallback });
       q.queue.on('global:completed', onJobCompleteCallback);
 
       const onJobFailedCallback = this.onJobFailed.bind(this, q);
-      this.jobFailedListeners.add(onJobFailedCallback);
+      this.queueListeners.add({ queue: q, event: 'global:failed', callback: onJobFailedCallback });
       q.queue.on('global:failed', onJobFailedCallback);
     }
   }
@@ -146,15 +155,19 @@ export class MetricCollector {
   }
 
   public async close(): Promise<void> {
+
     this.defaultRedisClient.disconnect();
-    for (const q of this.queues) {
-      for (const listener of this.jobCompletedListeners) {
-        (q.queue as any as EventEmitter).removeListener('global:completed', listener);
-      }
-      for (const listener of this.jobFailedListeners) {
-        (q.queue as any as EventEmitter).removeListener('global:failed', listener);
-      }
+
+    for (const redisClient of this.queueRedisClients) {
+      redisClient.disconnect();
     }
+    this.queueRedisClients.clear();
+
+    for (const listener of this.queueListeners) {
+      (listener.queue.queue as any as EventEmitter).removeListener(listener.event, listener.callback);
+    }
+    this.queueListeners.clear();
+
     await Promise.all(this.queues.map(q => q.queue.close()));
   }
 
