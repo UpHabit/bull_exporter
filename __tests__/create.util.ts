@@ -9,9 +9,10 @@ export interface TestData {
   prefix: string;
   guages: QueueGauges;
   registry: Registry;
+  metricsPrefix: string;
 }
 
-export function makeQueue(name: string = 'TestQueue', prefix: string = 'test-queue'): TestData {
+export function makeQueue(name: string = 'TestQueue', prefix: string = 'test-queue', metricsPrefix: string = 'test_stat_'): TestData {
 
   const registry = new Registry();
   const queue = new Bull(name, { prefix });
@@ -21,6 +22,7 @@ export function makeQueue(name: string = 'TestQueue', prefix: string = 'test-que
     queue,
     prefix,
     registry,
-    guages: makeGuages('test_stat_', [registry]),
+    metricsPrefix,
+    guages: makeGuages(metricsPrefix, [registry]),
   };
 }
