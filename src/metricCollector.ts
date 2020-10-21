@@ -173,6 +173,8 @@ export class MetricCollector {
   }
 
   public async close(): Promise<void> {
+    globalRegister.clear();
+
     this.defaultRedisClient.disconnect();
 
     for (const redisClient of this.queueRedisClients) {
