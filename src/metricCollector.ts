@@ -33,6 +33,8 @@ interface QueueListener {
   callback: any;
 }
 
+type MetricCollectedHanler = ((queuePrefix: string, queueName: string) => void) | undefined;
+
 export class MetricCollector {
 
   private readonly logger: Logger;
@@ -55,7 +57,7 @@ export class MetricCollector {
   constructor(
     queueNames: string[],
     opts: MetricCollectorOptions,
-    registers: Registry[] = [globalRegister],
+    registers: Registry[] = [globalRegister]
   ) {
     const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
@@ -111,9 +113,22 @@ export class MetricCollector {
     }
   }
 
+  private jobCompletionCollectedHandler: MetricCollectedHanler;
+  public registerJobCompletionCollectedHandler(jobCompletionCollectedHandler: MetricCollectedHanler) {
+    this.jobCompletionCollectedHandler = jobCompletionCollectedHandler;
+  }
+
+  private jobFailureCollectedHandler: MetricCollectedHanler;
+  public registerJobFailureCollectedHandler(jobFailureCollectedHandler: MetricCollectedHanler) {
+    this.jobFailureCollectedHandler = jobFailureCollectedHandler;
+  }
+
   private async onJobComplete(queue: QueueData, id: string): Promise<void> {
     try {
       await incrementJobTotalCompletedCounter(queue.prefix, queue.name, this.guages);
+      if (this.jobCompletionCollectedHandler) {
+        this.jobCompletionCollectedHandler(queue.prefix, queue.name);
+      }
       const job = await queue.queue.getJob(id);
       if (!job) {
         this.logger.warn({ job: id }, 'unable to find job from id');
@@ -128,6 +143,9 @@ export class MetricCollector {
   private async onJobFailed(queue: QueueData, id: string): Promise<void> {
     try {
       await incrementJobTotalFailedCounter(queue.prefix, queue.name, this.guages);
+      if (this.jobFailureCollectedHandler) {
+        this.jobFailureCollectedHandler(queue.prefix, queue.name);
+      }
     } catch (err) {
       this.logger.error({ err, job: id }, 'unable to increment failed jobs counter');
     }
@@ -155,7 +173,6 @@ export class MetricCollector {
   }
 
   public async close(): Promise<void> {
-
     this.defaultRedisClient.disconnect();
 
     for (const redisClient of this.queueRedisClients) {
