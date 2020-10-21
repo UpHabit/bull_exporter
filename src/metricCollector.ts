@@ -5,7 +5,14 @@ import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
 import { logger as globalLogger } from './logger';
-import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
+import {
+  getJobCompleteStats,
+  getStats,
+  makeGuages,
+  QueueGauges,
+  incrementJobTotalCompletedCounter,
+  incrementJobTotalFailedCounter
+} from './queueGauges';
 
 export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
   metricPrefix: string;
@@ -20,6 +27,14 @@ export interface QueueData<T = unknown> {
   prefix: string;
 }
 
+interface QueueListener {
+  queue: QueueData<unknown>;
+  event: string;
+  callback: any;
+}
+
+type MetricCollectedHanler = ((queuePrefix: string, queueName: string) => void) | undefined;
+
 export class MetricCollector {
 
   private readonly logger: Logger;
@@ -33,14 +48,16 @@ export class MetricCollector {
     return [...this.queuesByName.values()];
   }
 
-  private readonly myListeners: Set<(id: string) => Promise<void>> = new Set();
+  private readonly queueListeners: Set<QueueListener> = new Set();
+  private readonly queueRedisClients: Set<IoRedis.Redis> = new Set();
+
 
   private readonly guages: QueueGauges;
 
   constructor(
     queueNames: string[],
     opts: MetricCollectorOptions,
-    registers: Registry[] = [globalRegister],
+    registers: Registry[] = [globalRegister]
   ) {
     const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
@@ -56,7 +73,9 @@ export class MetricCollector {
     if (_type === 'client') {
       return this.defaultRedisClient!;
     }
-    return new IoRedis(this.redisUri, redisOpts);
+    const redisClient = new IoRedis(this.redisUri, redisOpts);
+    this.queueRedisClients.add(redisClient);
+    return redisClient;
   }
 
   private addToQueueSet(names: string[]): void {
@@ -94,8 +113,22 @@ export class MetricCollector {
     }
   }
 
+  private jobCompletionCollectedHandler: MetricCollectedHanler;
+  public registerJobCompletionCollectedHandler(jobCompletionCollectedHandler: MetricCollectedHanler) {
+    this.jobCompletionCollectedHandler = jobCompletionCollectedHandler;
+  }
+
+  private jobFailureCollectedHandler: MetricCollectedHanler;
+  public registerJobFailureCollectedHandler(jobFailureCollectedHandler: MetricCollectedHanler) {
+    this.jobFailureCollectedHandler = jobFailureCollectedHandler;
+  }
+
   private async onJobComplete(queue: QueueData, id: string): Promise<void> {
     try {
+      await incrementJobTotalCompletedCounter(queue.prefix, queue.name, this.guages);
+      if (this.jobCompletionCollectedHandler) {
+        this.jobCompletionCollectedHandler(queue.prefix, queue.name);
+      }
       const job = await queue.queue.getJob(id);
       if (!job) {
         this.logger.warn({ job: id }, 'unable to find job from id');
@@ -103,15 +136,30 @@ export class MetricCollector {
       }
       await getJobCompleteStats(queue.prefix, queue.name, job, this.guages);
     } catch (err) {
-      this.logger.error({ err, job: id }, 'unable to fetch completed job');
+      this.logger.error({ err, job: id }, 'unable to fetch or increment completed job');
+    }
+  }
+
+  private async onJobFailed(queue: QueueData, id: string): Promise<void> {
+    try {
+      await incrementJobTotalFailedCounter(queue.prefix, queue.name, this.guages);
+      if (this.jobFailureCollectedHandler) {
+        this.jobFailureCollectedHandler(queue.prefix, queue.name);
+      }
+    } catch (err) {
+      this.logger.error({ err, job: id }, 'unable to increment failed jobs counter');
     }
   }
 
   public collectJobCompletions(): void {
     for (const q of this.queues) {
-      const cb = this.onJobComplete.bind(this, q);
-      this.myListeners.add(cb);
-      q.queue.on('global:completed', cb);
+      const onJobCompleteCallback = this.onJobComplete.bind(this, q);
+      this.queueListeners.add({ queue: q, event: 'global:completed', callback: onJobCompleteCallback });
+      q.queue.on('global:completed', onJobCompleteCallback);
+
+      const onJobFailedCallback = this.onJobFailed.bind(this, q);
+      this.queueListeners.add({ queue: q, event: 'global:failed', callback: onJobFailedCallback });
+      q.queue.on('global:failed', onJobFailedCallback);
     }
   }
 
@@ -125,12 +173,20 @@ export class MetricCollector {
   }
 
   public async close(): Promise<void> {
+    globalRegister.clear();
+
     this.defaultRedisClient.disconnect();
-    for (const q of this.queues) {
-      for (const l of this.myListeners) {
-        (q.queue as any as EventEmitter).removeListener('global:completed', l);
-      }
+
+    for (const redisClient of this.queueRedisClients) {
+      redisClient.disconnect();
     }
+    this.queueRedisClients.clear();
+
+    for (const listener of this.queueListeners) {
+      (listener.queue.queue as any as EventEmitter).removeListener(listener.event, listener.callback);
+    }
+    this.queueListeners.clear();
+
     await Promise.all(this.queues.map(q => q.queue.close()));
   }
 

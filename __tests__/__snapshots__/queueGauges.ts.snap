@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should list 1 active job 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 
@@ -16,18 +16,24 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 1
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
 
 exports[`should list 1 active job 2`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 1
 
@@ -42,18 +48,24 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"2dc07c0ff9d27ef5\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
 
 exports[`should list 1 completed job 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 1
 
@@ -68,18 +80,25 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
+test_stat_total_completed{prefix=\\"test-queue\\",queue=\\"7cc276b43bb43656\\"} 1
 "
 `;
 
 exports[`should list 1 completed job with delay 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"672d03e07bff9cd3\\"} 1
 
@@ -103,18 +122,24 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"672d03e07bff9cd3\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"672d03e07bff9cd3\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"672d03e07bff9cd3\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"672d03e07bff9cd3\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
 
 exports[`should list 1 delayed job 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
 
@@ -129,18 +154,24 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 1
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"4f2249f79c9d68b5\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
 
 exports[`should list 1 failed job 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
 
@@ -155,18 +186,25 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 1
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 0
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+test_stat_total_failed{prefix=\\"test-queue\\",queue=\\"dd304535bf11c117\\"} 1
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
 
 exports[`should list 1 queued job 1`] = `
-"# HELP test_stat_completed Number of completed messages
+"# HELP test_stat_completed Number of completed messages (not yet deleted)
 # TYPE test_stat_completed gauge
 test_stat_completed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
 
@@ -181,12 +219,18 @@ test_stat_active{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
 # TYPE test_stat_delayed gauge
 test_stat_delayed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
 
-# HELP test_stat_failed Number of failed messages
+# HELP test_stat_failed Number of failed messages (not yet deleted)
 # TYPE test_stat_failed gauge
 test_stat_failed{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 0
 
 # HELP test_stat_waiting Number of waiting messages
 # TYPE test_stat_waiting gauge
 test_stat_waiting{prefix=\\"test-queue\\",queue=\\"54cceb2dc1d55935\\"} 1
+
+# HELP test_stat_total_failed Total number of failed messages
+# TYPE test_stat_total_failed counter
+
+# HELP test_stat_total_completed Total number of completed messages
+# TYPE test_stat_total_completed counter
 "
 `;
