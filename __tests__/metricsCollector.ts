@@ -33,7 +33,7 @@ describe('metricsCollector', () => {
     await testData.queue.close();
   });
 
-  it('should list 2 total completed job', async () => {
+  it('should list 1 total completed job', async () => {
     const {
       queue,
     } = testData;
@@ -41,26 +41,20 @@ describe('metricsCollector', () => {
     queue.process(async () => {
     });
 
-    let count = 0;
     const metricCollected = new Promise((resolve) => {
       collector.registerJobCompletionCollectedHandler(() => {
-        count++;
-        if (count >= 2) {
-          resolve();
-        }
+        resolve();
       });
     });
 
-    const job1 = (await queue.add({ a: 1 }));
-    const job2 = (await queue.add({ a: 2 }));
-    await job1.finished();
-    await job2.finished();
+    const job = (await queue.add({ a: 1 }));
+    await job.finished();
 
     await metricCollected;
 
     const metrics = promClient.register.metrics();
 
-    expect(metrics).toMatch(/^test_stat_total_completed{prefix="test-queue",queue="TestQueue"} 2$/m);
+    expect(metrics).toMatch(/^test_stat_total_completed{prefix="test-queue",queue="TestQueue"} 1$/m);
   });
 
   it('should list 1 total failed job', async () => {
