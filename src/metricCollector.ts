@@ -105,6 +105,7 @@ export class MetricCollector {
     for await (const keyChunk of keyStream) {
       for (const key of keyChunk) {
         const match = keyPattern.exec(key);
+        this.logger.info('Found queue with key:', key, 'match:', match && match[1]);
         if (match && match[1]) {
           this.addToQueueSet([match[1]]);
         }
