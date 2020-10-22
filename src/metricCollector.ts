@@ -159,6 +159,8 @@ export class MetricCollector {
       const onJobFailedCallback = this.onJobFailed.bind(this, q);
       this.queueListeners.add({ queue: q, event: 'global:failed', callback: onJobFailedCallback });
       q.queue.on('global:failed', onJobFailedCallback);
+
+      this.logger.info('Job global:completed and global:failed events subscribed', q.prefix, q.name);
     }
   }
 
