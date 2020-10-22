@@ -57,28 +57,4 @@ describe('metricsCollector', () => {
     expect(metrics).toMatch(/^test_stat_total_completed{prefix="test-queue",queue="TestQueue"} 1$/m);
   });
 
-  it('should list 1 total failed job', async () => {
-    const {
-      queue,
-    } = testData;
-
-    queue.process(async () => {
-      throw new Error('expected');
-    });
-
-    const metricCollected = new Promise((resolve) => {
-      collector.registerJobFailureCollectedHandler(() => {
-        resolve();
-      });
-    });
-
-    const job = (await queue.add({ a: 1 }));
-    await expect(job.finished()).rejects.toThrow(/expected/);
-
-    await metricCollected;
-
-    const metrics = promClient.register.metrics();
-
-    expect(metrics).toMatch(/^test_stat_total_failed{prefix="test-queue",queue="TestQueue"} 1$/m);
-  });
 });
