@@ -8,10 +8,10 @@ import { logger as globalLogger } from './logger';
 import {
   getJobCompleteStats,
   getStats,
+  incrementJobTotalCompletedCounter,
+  incrementJobTotalFailedCounter,
   makeGuages,
   QueueGauges,
-  incrementJobTotalCompletedCounter,
-  incrementJobTotalFailedCounter
 } from './queueGauges';
 
 export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
@@ -51,13 +51,12 @@ export class MetricCollector {
   private readonly queueListeners: Set<QueueListener> = new Set();
   private readonly queueRedisClients: Set<IoRedis.Redis> = new Set();
 
-
   private readonly guages: QueueGauges;
 
   constructor(
     queueNames: string[],
     opts: MetricCollectorOptions,
-    registers: Registry[] = [globalRegister]
+    registers: Registry[] = [globalRegister],
   ) {
     const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
@@ -114,12 +113,12 @@ export class MetricCollector {
   }
 
   private jobCompletionCollectedHandler: MetricCollectedHanler;
-  public registerJobCompletionCollectedHandler(jobCompletionCollectedHandler: MetricCollectedHanler) {
+  public registerJobCompletionCollectedHandler(jobCompletionCollectedHandler: MetricCollectedHanler): void {
     this.jobCompletionCollectedHandler = jobCompletionCollectedHandler;
   }
 
   private jobFailureCollectedHandler: MetricCollectedHanler;
-  public registerJobFailureCollectedHandler(jobFailureCollectedHandler: MetricCollectedHanler) {
+  public registerJobFailureCollectedHandler(jobFailureCollectedHandler: MetricCollectedHanler): void {
     this.jobFailureCollectedHandler = jobFailureCollectedHandler;
   }
 

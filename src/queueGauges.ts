@@ -1,5 +1,5 @@
 import bull from 'bull';
-import { Gauge, Registry, Summary, Counter } from 'prom-client';
+import { Counter, Gauge, Registry, Summary } from 'prom-client';
 
 type LabelsT = 'queue' | 'prefix';
 export interface QueueGauges {
