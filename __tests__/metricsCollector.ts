@@ -41,9 +41,13 @@ describe('metricsCollector', () => {
     queue.process(async () => {
     });
 
+    let count = 0;
     const metricCollected = new Promise((resolve) => {
       collector.registerJobCompletionCollectedHandler(() => {
-        resolve();
+        count++;
+        if (count >= 2) {
+          resolve();
+        }
       });
     });
 
