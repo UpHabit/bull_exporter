@@ -10,7 +10,7 @@ describe('metricsCollector', () => {
   let collector: MetricCollector;
   beforeEach(async () => {
     testData = await makeQueue();
-    collector = new MetricCollector([], {
+    collector = new MetricCollector([testData.name], {
       logger,
       metricPrefix: testData.metricsPrefix,
       redis: REDIS_TEST_URL,
@@ -18,7 +18,6 @@ describe('metricsCollector', () => {
       autoDiscover: false,
     });
 
-    await collector.discoverAll();
     collector.collectJobCompletions();
   });
 
