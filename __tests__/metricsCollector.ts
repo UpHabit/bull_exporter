@@ -9,7 +9,7 @@ describe('metricsCollector', () => {
   let testData: any;
   let collector: MetricCollector;
   beforeEach(async () => {
-    testData = makeQueue();
+    testData = await makeQueue();
     collector = new MetricCollector([], {
       logger,
       metricPrefix: testData.metricsPrefix,
