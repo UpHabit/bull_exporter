@@ -124,7 +124,6 @@ export class MetricCollector {
 
   private async onJobComplete(queue: QueueData, id: string): Promise<void> {
     try {
-      this.logger.info('Job completed handler', queue.prefix, queue.name, id);
       await incrementJobTotalCompletedCounter(queue.prefix, queue.name, this.guages);
       if (this.jobCompletionCollectedHandler) {
         this.jobCompletionCollectedHandler(queue.prefix, queue.name);
@@ -142,7 +141,6 @@ export class MetricCollector {
 
   private async onJobFailed(queue: QueueData, id: string): Promise<void> {
     try {
-      this.logger.info('Job failed handler', queue.prefix, queue.name, id);
       await incrementJobTotalFailedCounter(queue.prefix, queue.name, this.guages);
       if (this.jobFailureCollectedHandler) {
         this.jobFailureCollectedHandler(queue.prefix, queue.name);
