@@ -25,25 +25,25 @@ fi
 docker build . -t bull_exporter:latest
 
 printf '  \xF0\x9F\x90\xB3 \xF0\x9F\x94\xA8 Done building\n'
-echo "        uphabit/bull_exporter:latest"
-echo "        uphabit/bull_exporter:git-$hash"
+echo "        jablotron-cloud-services/bull_exporter:latest"
+echo "        jablotron-cloud-services/bull_exporter:git-$hash"
 
-docker tag bull_exporter:latest uphabit/bull_exporter:latest
-docker tag bull_exporter:latest uphabit/bull_exporter:"git-$hash"
+docker tag bull_exporter:latest jablotron-cloud-services/bull_exporter:latest
+docker tag bull_exporter:latest jablotron-cloud-services/bull_exporter:"git-$hash"
 if [[ -n "${BRANCH_NAME:-}" ]] ; then
     docker tag bull_exporter:latest uphabit/bull_exporter:"branch-$BRANCH_NAME-latest"
-    echo "        uphabit/bull_exporter:branch-$BRANCH_NAME-latest"
+    echo "        jablotron-cloud-services/bull_exporter:branch-$BRANCH_NAME-latest"
 fi
 
 if [[ "${1:-}" != "--push" ]]; then
     exit 0
 fi
 
-docker push  uphabit/bull_exporter:latest
-docker push  uphabit/bull_exporter:"git-$hash"
+docker push  jablotron-cloud-services/bull_exporter:latest
+docker push  jablotron-cloud-services/bull_exporter:"git-$hash"
 
 if [[ -n "${BRANCH_NAME:-}" ]] ; then
-    docker push uphabit/bull_exporter:"branch-$BRANCH_NAME-latest"
+    docker push jablotron-cloud-services/bull_exporter:"branch-$BRANCH_NAME-latest"
 fi
 
 printf '  \xF0\x9F\x90\xB3 \xE2\xAC\x86\xEF\xB8\x8F Upload Complete\n'

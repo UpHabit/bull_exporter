@@ -1,4 +1,4 @@
-repositoryUrl: git@github.com:UpHabit/bull_exporter.git
+repositoryUrl: git@github.com:jablotron-cloud-services/bull_exporter.git
 branch: master
 dryRun: false
 debug: false
