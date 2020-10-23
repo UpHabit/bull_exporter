@@ -16,7 +16,7 @@ beforeEach(async () => {
   jest.resetModuleRegistry();
   const { makeQueue } = await import('./create.util');
   const hash = getCurrentTestHash();
-  testData = makeQueue(hash);
+  testData = await makeQueue(hash);
 });
 
 afterEach(async () => {

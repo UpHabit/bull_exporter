@@ -12,10 +12,11 @@ export interface TestData {
   metricsPrefix: string;
 }
 
-export function makeQueue(name: string = 'TestQueue', prefix: string = 'test-queue', metricsPrefix: string = 'test_stat_'): TestData {
+export async function makeQueue(name: string = 'TestQueue', prefix: string = 'test-queue', metricsPrefix: string = 'test_stat_'): Promise<TestData> {
 
   const registry = new Registry();
   const queue = new Bull(name, { prefix });
+  await queue.isReady();
 
   return {
     name,

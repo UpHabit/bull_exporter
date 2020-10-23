@@ -9,8 +9,8 @@ describe('metricsCollector', () => {
   let testData: any;
   let collector: MetricCollector;
   beforeEach(async () => {
-    testData = makeQueue();
-    collector = new MetricCollector([], {
+    testData = await makeQueue();
+    collector = new MetricCollector([testData.name], {
       logger,
       metricPrefix: testData.metricsPrefix,
       redis: REDIS_TEST_URL,
@@ -18,7 +18,6 @@ describe('metricsCollector', () => {
       autoDiscover: false,
     });
 
-    await collector.discoverAll();
     collector.collectJobCompletions();
   });
 
@@ -33,7 +32,7 @@ describe('metricsCollector', () => {
     await testData.queue.close();
   });
 
-  it('should list 2 total completed job', async () => {
+  it('should list 1 total completed job', async () => {
     const {
       queue,
     } = testData;
@@ -47,16 +46,14 @@ describe('metricsCollector', () => {
       });
     });
 
-    const job1 = (await queue.add({ a: 1 }));
-    const job2 = (await queue.add({ a: 2 }));
-    await job1.finished();
-    await job2.finished();
+    const job = (await queue.add({ a: 1 }));
+    await job.finished();
 
     await metricCollected;
 
     const metrics = promClient.register.metrics();
 
-    expect(metrics).toMatch(/^test_stat_total_completed{prefix="test-queue",queue="TestQueue"} 2$/m);
+    expect(metrics).toMatch(/^test_stat_total_completed{prefix="test-queue",queue="TestQueue"} 1$/m);
   });
 
   it('should list 1 total failed job', async () => {
@@ -83,4 +80,6 @@ describe('metricsCollector', () => {
 
     expect(metrics).toMatch(/^test_stat_total_failed{prefix="test-queue",queue="TestQueue"} 1$/m);
   });
+
+
 });
