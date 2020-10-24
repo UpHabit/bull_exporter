@@ -35,12 +35,14 @@ script:
   - yarn run test
   - yarn run lint
 
-before_deploy:
-  - openssl aes-256-cbc -K $encrypted_bea0181439c1_key -iv $encrypted_bea0181439c1_iv -in git_deploy_key.enc -out /tmp/git_deploy_key -d
+before_install:
+- openssl aes-256-cbc -K $encrypted_bea0181439c1_key -iv $encrypted_bea0181439c1_iv -in git_deploy_key.enc -out /tmp/git_deploy_key -d
   - chmod 600 /tmp/git_deploy_key
   - echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
   - eval "$(ssh-agent -s)"
-  - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+  - DISPLAY= SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+
+before_deploy:
   - pip install --user awscli
   - export PATH=$PATH:$HOME/.local/bin:$HOME/bin
   - >
