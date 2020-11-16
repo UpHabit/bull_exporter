@@ -59,6 +59,8 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     logger,
     metricPrefix: opts.metricPrefix,
     redis: opts.url,
+    sentinelExtraEndpoints: opts.sentinelExtraEndpoints,
+    sentinelMasterName: opts.sentinelMasterName,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
   });
