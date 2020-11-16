@@ -13,6 +13,8 @@ export async function printOnce(opts: Options): Promise<void> {
     logger,
     metricPrefix: opts.metricPrefix,
     redis: opts.url,
+    sentinelExtraEndpoints: opts.sentinelExtraEndpoints,
+    sentinelMasterName: opts.sentinelMasterName,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
   });

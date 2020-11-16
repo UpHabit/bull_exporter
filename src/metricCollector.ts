@@ -3,6 +3,7 @@ import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
 import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
+import URL from 'url';
 
 import { logger as globalLogger } from './logger';
 import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
@@ -10,6 +11,8 @@ import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueG
 export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
   metricPrefix: string;
   redis: string;
+  sentinelExtraEndpoints: string[];
+  sentinelMasterName: string;
   autoDiscover: boolean;
   logger: Logger;
 }
@@ -25,7 +28,7 @@ export class MetricCollector {
   private readonly logger: Logger;
 
   private readonly defaultRedisClient: IoRedis.Redis;
-  private readonly redisUri: string;
+  private readonly redisConnectionCredentials: string | IoRedis.RedisOptions;
   private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
 
@@ -37,14 +40,40 @@ export class MetricCollector {
 
   private readonly guages: QueueGauges;
 
+  private static parseSentinelUri(redisUri: string, sentinelExtraEndpoints: string[], sentinelMasterName?: string): string | IoRedis.RedisOptions {
+    const { protocol, host, port, auth } = URL.parse(redisUri);
+
+    if (protocol !== 'sentinel:') {
+      return redisUri;
+    }
+
+    const password = auth ? auth.split(':')[1] : undefined;
+
+    if (host === undefined || port === undefined || sentinelExtraEndpoints === undefined) {
+      throw new Error('');
+    }
+
+    return {
+      password,
+      sentinels: [{ host, port: Number(port) }].concat(sentinelExtraEndpoints.map(sentinelExtraEndpoint => {
+        const [additionalHost, additionalPort] = sentinelExtraEndpoint.split(':');
+        return { host: additionalHost, port: Number(additionalPort) };
+      })),
+      name: sentinelMasterName,
+    };
+  }
   constructor(
     queueNames: string[],
     opts: MetricCollectorOptions,
     registers: Registry[] = [globalRegister],
   ) {
-    const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
-    this.redisUri = redis;
-    this.defaultRedisClient = new IoRedis(this.redisUri);
+    const { logger, autoDiscover, redis, metricPrefix, sentinelExtraEndpoints, sentinelMasterName, ...bullOpts } = opts;
+    this.redisConnectionCredentials = MetricCollector.parseSentinelUri(redis, sentinelExtraEndpoints, sentinelMasterName === '' ? undefined : sentinelMasterName);
+    if (typeof this.redisConnectionCredentials === 'string') {
+      this.defaultRedisClient = new IoRedis(this.redisConnectionCredentials);
+    } else {
+      this.defaultRedisClient = new IoRedis(this.redisConnectionCredentials);
+    }
     this.defaultRedisClient.setMaxListeners(32);
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
@@ -56,7 +85,10 @@ export class MetricCollector {
     if (_type === 'client') {
       return this.defaultRedisClient!;
     }
-    return new IoRedis(this.redisUri, redisOpts);
+    if (typeof this.redisConnectionCredentials === 'string') {
+      return new IoRedis(this.redisConnectionCredentials, redisOpts);
+    }
+    return new IoRedis({ ...this.redisConnectionCredentials, ...redisOpts });
   }
 
   private addToQueueSet(names: string[]): void {
