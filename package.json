@@ -20,7 +20,7 @@
     "@types/node": "10.17.27",
     "jest": "26.1.0",
     "madge": "3.9.2",
-    "ts-jest": "26.1.2",
+    "ts-jest": "27.0.3",
     "tslint": "5.20.1",
     "tslint-config-airbnb": "5.11.2",
     "tslint-eslint-rules": "5.4.0",
