@@ -1,9 +1,9 @@
-import promClient from 'prom-client';
+import promClient from "prom-client";
 
-import { logger } from './logger';
-import { MetricCollector } from './metricCollector';
-import { getOptionsFromArgs, Options } from './options';
-import { startServer } from './server';
+import { logger } from "./logger";
+import { MetricCollector } from "./metricCollector";
+import { getOptionsFromArgs, Options } from "./options";
+import { startServer } from "./server";
 
 // because we explicitly want just the metrics here
 // tslint:disable:no-console
@@ -15,7 +15,7 @@ export async function printOnce(opts: Options): Promise<void> {
     redis: opts.url,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
-    useClusterMode: opts.useClusterMode
+    useClusterMode: opts.useClusterMode,
   });
   if (opts.autoDiscover) {
     await collector.discoverAll();
@@ -45,18 +45,18 @@ if (require.main === module) {
 
   let exitCode = 0;
   main(...args)
-    .catch(() => process.exitCode = exitCode = 1)
-    .then(() => {
-      setTimeout(
-        () => {
-          logger.error('No clean exit after 5 seconds, force exit');
-          process.exit(exitCode);
-        },
-        5000,
-      ).unref();
+    .catch((error) => {
+      console.error(error);
+      return (process.exitCode = exitCode = 1);
     })
-    .catch(err => {
-      console.error('Double error');
+    .then(() => {
+      setTimeout(() => {
+        logger.error("No clean exit after 5 seconds, force exit");
+        process.exit(exitCode);
+      }, 5000).unref();
+    })
+    .catch((err) => {
+      console.error("Double error");
       console.error(err.stack);
       process.exit(-1);
     });

@@ -3,6 +3,7 @@ import * as Logger from "bunyan";
 import { EventEmitter } from "events";
 import IoRedis from "ioredis";
 import { register as globalRegister, Registry } from "prom-client";
+import { Readable } from "stream";
 
 import { logger as globalLogger } from "./logger";
 import {
@@ -64,7 +65,7 @@ export class MetricCollector {
     this.redisUri = redis;
     this.useClusterMode = useClusterMode;
     this.defaultRedisClient = opts.useClusterMode
-      ? new IoRedis.Cluster(this.redisUri.split(','))
+      ? new IoRedis.Cluster(this.redisUri.split(","))
       : new IoRedis(this.redisUri);
 
     this.defaultRedisClient.setMaxListeners(32);
@@ -82,7 +83,7 @@ export class MetricCollector {
       return this.defaultRedisClient!;
     }
     return this.useClusterMode
-      ? new IoRedis.Cluster(this.redisUri.split(','), redisOpts)
+      ? new IoRedis.Cluster(this.redisUri.split(","), redisOpts)
       : new IoRedis(this.redisUri, redisOpts);
   }
 
@@ -109,17 +110,45 @@ export class MetricCollector {
     );
     this.logger.info({ pattern: keyPattern.source }, "running queue discovery");
 
-    const keyStream = (this.defaultRedisClient as IoRedis.Redis).scanStream({
+    const keys: string[] = await this.scan({
       match: `${this.bullOpts.prefix}:*:*`,
     });
-    // tslint:disable-next-line:await-promise tslint does not like Readable's here
+    for (const key of keys) {
+      const match = keyPattern.exec(key);
+      if (match && match[1]) {
+        this.addToQueueSet([match[1]]);
+      }
+    }
+  }
+
+  private async convertKeyStreamToKeys(keyStream: Readable): Promise<string[]> {
+    const keys: string[] = [];
     for await (const keyChunk of keyStream) {
       for (const key of keyChunk) {
-        const match = keyPattern.exec(key);
-        if (match && match[1]) {
-          this.addToQueueSet([match[1]]);
-        }
+        keys.push(key);
       }
+    }
+    return keys;
+  }
+
+  private async scan({ match }: { match: string }): Promise<string[]> {
+    if (this.useClusterMode === false) {
+      const keyStream: Readable = (
+        this.defaultRedisClient as IoRedis.Redis
+      ).scanStream({
+        match,
+      });
+      return this.convertKeyStreamToKeys(keyStream);
+    } else {
+      const nodes = (this.defaultRedisClient as IoRedis.Cluster).nodes("all");
+      const streams = nodes.map((node: IoRedis.Redis) =>
+        node.scanStream({ match })
+      );
+      const keys = await Promise.all(
+        streams.map((value: Readable) => this.convertKeyStreamToKeys(value))
+      );
+      // @ts-ignore
+      return [].concat(...keys);
     }
   }
 
@@ -152,7 +181,7 @@ export class MetricCollector {
   }
 
   public async ping(): Promise<void> {
-    await (this.defaultRedisClient as IoRedis.Redis).ping() ;
+    await (this.defaultRedisClient as IoRedis.Redis).ping();
   }
 
   public async close(): Promise<void> {
