@@ -111,9 +111,11 @@ export async function makeServer(opts: Options): Promise<express.Application> {
       res: express.Response,
       next: express.NextFunction
     ) => {
+      console.log('request');
       collector
         .ping()
         .then(() => {
+          console.log('response');
           res.send({
             ok: true,
           });

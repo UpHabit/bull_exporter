@@ -65,7 +65,7 @@ export class MetricCollector {
     this.redisUri = redis;
     this.useClusterMode = useClusterMode;
     this.defaultRedisClient = opts.useClusterMode
-      ? new IoRedis.Cluster(this.redisUri.split(","))
+      ? new IoRedis.Cluster([this.redisUri])
       : new IoRedis(this.redisUri);
 
     this.defaultRedisClient.setMaxListeners(32);
@@ -79,6 +79,11 @@ export class MetricCollector {
     _type: "client" | "subscriber" | "bclient",
     redisOpts?: IoRedis.RedisOptions
   ): IoRedis.Redis | IoRedis.Cluster {
+    console.log(
+      "connecting to redis using",
+      this.useClusterMode,
+      this.redisUri
+    );
     if (_type === "client") {
       return this.defaultRedisClient!;
     }
@@ -110,9 +115,19 @@ export class MetricCollector {
     );
     this.logger.info({ pattern: keyPattern.source }, "running queue discovery");
 
-    const keys: string[] = await this.scan({
-      match: `${this.bullOpts.prefix}:*:*`,
-    });
+    try {
+      // @ts-ignore
+      console.log(await this.defaultRedisClient.ping());
+    } catch (err) {
+      console.log(err);
+    }
+    
+    console.log(await this.defaultRedisClient.keys('*'));
+    const keys: string[] = await this.defaultRedisClient.keys(
+      `${this.bullOpts.prefix}:*:*`
+    );
+
+    console.log("keys", keys, this.scan.name);
     for (const key of keys) {
       const match = keyPattern.exec(key);
       if (match && match[1]) {
