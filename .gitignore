@@ -9,5 +9,3 @@ src/**/*.js
 __tests__/**/*.js
 /.venv/
 /__pycache__/
-.env
-docker-compose.yml

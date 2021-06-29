@@ -1,9 +1,9 @@
-import promClient from "prom-client";
+import promClient from 'prom-client';
 
-import { logger } from "./logger";
-import { MetricCollector } from "./metricCollector";
-import { getOptionsFromArgs, Options } from "./options";
-import { startServer } from "./server";
+import { logger } from './logger';
+import { MetricCollector } from './metricCollector';
+import { getOptionsFromArgs, Options } from './options';
+import { startServer } from './server';
 
 // because we explicitly want just the metrics here
 // tslint:disable:no-console
@@ -45,18 +45,17 @@ if (require.main === module) {
 
   let exitCode = 0;
   main(...args)
-    .catch((error) => {
-      console.error(error);
+    .catch(() => {
       return (process.exitCode = exitCode = 1);
     })
     .then(() => {
       setTimeout(() => {
-        logger.error("No clean exit after 5 seconds, force exit");
+        logger.error('No clean exit after 5 seconds, force exit');
         process.exit(exitCode);
       }, 5000).unref();
     })
     .catch((err) => {
-      console.error("Double error");
+      console.error('Double error');
       console.error(err.stack);
       process.exit(-1);
     });

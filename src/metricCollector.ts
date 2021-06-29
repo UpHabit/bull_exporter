@@ -1,20 +1,20 @@
-import bull from "bull";
-import * as Logger from "bunyan";
-import { EventEmitter } from "events";
-import IoRedis from "ioredis";
-import { register as globalRegister, Registry } from "prom-client";
-import { Readable } from "stream";
+import bull from 'bull';
+import * as Logger from 'bunyan';
+import { EventEmitter } from 'events';
+import IoRedis from 'ioredis';
+import { register as globalRegister, Registry } from 'prom-client';
+import { Readable } from 'stream';
 
-import { logger as globalLogger } from "./logger";
+import { logger as globalLogger } from './logger';
 import {
   getJobCompleteStats,
   getStats,
   makeGuages,
   QueueGauges,
-} from "./queueGauges";
+} from './queueGauges';
 
 export interface MetricCollectorOptions
-  extends Omit<bull.QueueOptions, "redis"> {
+  extends Omit<bull.QueueOptions, 'redis'> {
   metricPrefix: string;
   redis: string;
   autoDiscover: boolean;
@@ -28,6 +28,12 @@ export interface QueueData<T = unknown> {
   prefix: string;
 }
 
+/**
+ * first item in tuple is the cursor
+ * 2nd item in tuple are keys
+ */
+export type RedisClusterScanOutput = [string, string[]];
+
 export class MetricCollector {
   private readonly logger: Logger;
 
@@ -38,7 +44,7 @@ export class MetricCollector {
    * property is used to decide wether connect to redis using cluster mode or not?
    */
   private readonly useClusterMode: boolean;
-  private readonly bullOpts: Omit<bull.QueueOptions, "redis">;
+  private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
 
   private get queues(): QueueData<unknown>[] {
@@ -76,19 +82,14 @@ export class MetricCollector {
   }
 
   private createClient(
-    _type: "client" | "subscriber" | "bclient",
+    _type: 'client' | 'subscriber' | 'bclient',
     redisOpts?: IoRedis.RedisOptions
   ): IoRedis.Redis | IoRedis.Cluster {
-    console.log(
-      "connecting to redis using",
-      this.useClusterMode,
-      this.redisUri
-    );
-    if (_type === "client") {
+    if (_type === 'client') {
       return this.defaultRedisClient!;
     }
     return this.useClusterMode
-      ? new IoRedis.Cluster(this.redisUri.split(","), redisOpts)
+      ? new IoRedis.Cluster(this.redisUri.split(','), redisOpts)
       : new IoRedis(this.redisUri, redisOpts);
   }
 
@@ -97,14 +98,14 @@ export class MetricCollector {
       if (this.queuesByName.has(name)) {
         continue;
       }
-      this.logger.info("added queue", name);
+      this.logger.info('added queue', name);
       this.queuesByName.set(name, {
         name,
         queue: new bull(name, {
           ...this.bullOpts,
           createClient: this.createClient.bind(this),
         }),
-        prefix: this.bullOpts.prefix || "bull",
+        prefix: this.bullOpts.prefix || 'bull',
       });
     }
   }
@@ -113,21 +114,14 @@ export class MetricCollector {
     const keyPattern = new RegExp(
       `^${this.bullOpts.prefix}:([^:]+):(id|failed|active|waiting|stalled-check)$`
     );
-    this.logger.info({ pattern: keyPattern.source }, "running queue discovery");
+    this.logger.info({ pattern: keyPattern.source }, 'running queue discovery');
 
-    try {
-      // @ts-ignore
-      console.log(await this.defaultRedisClient.ping());
-    } catch (err) {
-      console.log(err);
-    }
-    
-    console.log(await this.defaultRedisClient.keys('*'));
-    const keys: string[] = await this.defaultRedisClient.keys(
-      `${this.bullOpts.prefix}:*:*`
-    );
+    const match = `${this.bullOpts.prefix}:*:*`;
 
-    console.log("keys", keys, this.scan.name);
+    const keys: string[] = this.useClusterMode
+      ? await this.scanCluster({ match, cursor: 0, keys: [] })
+      : await this.scanRedis({ match });
+
     for (const key of keys) {
       const match = keyPattern.exec(key);
       if (match && match[1]) {
@@ -136,8 +130,15 @@ export class MetricCollector {
     }
   }
 
-  private async convertKeyStreamToKeys(keyStream: Readable): Promise<string[]> {
+  private async scanRedis({ match }: { match: string }): Promise<string[]> {
     const keys: string[] = [];
+
+    const keyStream: Readable = (
+      this.defaultRedisClient as IoRedis.Redis
+    ).scanStream({
+      match,
+    });
+
     for await (const keyChunk of keyStream) {
       for (const key of keyChunk) {
         keys.push(key);
@@ -146,24 +147,31 @@ export class MetricCollector {
     return keys;
   }
 
-  private async scan({ match }: { match: string }): Promise<string[]> {
-    if (this.useClusterMode === false) {
-      const keyStream: Readable = (
-        this.defaultRedisClient as IoRedis.Redis
-      ).scanStream({
-        match,
-      });
-      return this.convertKeyStreamToKeys(keyStream);
+  private async scanCluster({
+    match,
+    cursor,
+    keys,
+  }: {
+    match: string;
+    cursor: number;
+    keys: string[];
+  }): Promise<string[]> {
+    // @ts-ignore
+    const output: RedisClusterScanOutput = await this.defaultRedisClient.scan(
+      cursor,
+      'MATCH',
+      match
+    );
+    const newCursor: number = parseInt(output[0]);
+
+    if (newCursor === 0) {
+      return [...keys, ...output[1]];
     } else {
-      const nodes = (this.defaultRedisClient as IoRedis.Cluster).nodes("all");
-      const streams = nodes.map((node: IoRedis.Redis) =>
-        node.scanStream({ match })
-      );
-      const keys = await Promise.all(
-        streams.map((value: Readable) => this.convertKeyStreamToKeys(value))
-      );
-      // @ts-ignore
-      return [].concat(...keys);
+      return await this.scanCluster({
+        match,
+        cursor: newCursor,
+        keys: [...keys, ...output[1]],
+      });
     }
   }
 
@@ -171,12 +179,12 @@ export class MetricCollector {
     try {
       const job = await queue.queue.getJob(id);
       if (!job) {
-        this.logger.warn({ job: id }, "unable to find job from id");
+        this.logger.warn({ job: id }, 'unable to find job from id');
         return;
       }
       await getJobCompleteStats(queue.prefix, queue.name, job, this.guages);
     } catch (err) {
-      this.logger.error({ err, job: id }, "unable to fetch completed job");
+      this.logger.error({ err, job: id }, 'unable to fetch completed job');
     }
   }
 
@@ -184,7 +192,7 @@ export class MetricCollector {
     for (const q of this.queues) {
       const cb = this.onJobComplete.bind(this, q);
       this.myListeners.add(cb);
-      q.queue.on("global:completed", cb);
+      q.queue.on('global:completed', cb);
     }
   }
 
@@ -203,7 +211,7 @@ export class MetricCollector {
     this.defaultRedisClient.disconnect();
     for (const q of this.queues) {
       for (const l of this.myListeners) {
-        (q.queue as any as EventEmitter).removeListener("global:completed", l);
+        (q.queue as any as EventEmitter).removeListener('global:completed', l);
       }
     }
     await Promise.all(this.queues.map((q) => q.queue.close()));

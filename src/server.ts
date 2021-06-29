@@ -1,11 +1,11 @@
-import express from "express";
-import * as http from "http";
-import promClient from "prom-client";
-import { v4 as uuid } from "uuid";
+import express from 'express';
+import * as http from 'http';
+import promClient from 'prom-client';
+import { v4 as uuid } from 'uuid';
 
-import { logger } from "./logger";
-import { MetricCollector } from "./metricCollector";
-import { Options } from "./options";
+import { logger } from './logger';
+import { MetricCollector } from './metricCollector';
+import { Options } from './options';
 
 function calcDuration(start: [number, number]): number {
   const diff = process.hrtime(start);
@@ -14,7 +14,7 @@ function calcDuration(start: [number, number]): number {
 
 export async function makeServer(opts: Options): Promise<express.Application> {
   const app = express();
-  app.disable("x-powered-by");
+  app.disable('x-powered-by');
 
   app.use(
     (
@@ -23,17 +23,17 @@ export async function makeServer(opts: Options): Promise<express.Application> {
       next: express.NextFunction
     ) => {
       res.header(
-        "Content-Security-Policy",
+        'Content-Security-Policy',
         `default-src 'none'; form-action 'none'`
       );
-      res.header("X-Permitted-Cross-Domain-Policies", "none");
-      res.header("Pragma", "no-cache");
+      res.header('X-Permitted-Cross-Domain-Policies', 'none');
+      res.header('Pragma', 'no-cache');
       res.header(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate"
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, proxy-revalidate'
       );
-      res.header("Content-Type-Options", "nosniff");
-      res.header("XSS-Protection", "1; mode=block");
+      res.header('Content-Type-Options', 'nosniff');
+      res.header('XSS-Protection', '1; mode=block');
       next();
     }
   );
@@ -51,20 +51,20 @@ export async function makeServer(opts: Options): Promise<express.Application> {
         req_id: id,
       });
 
-      res.on("finish", () => {
+      res.on('finish', () => {
         const data = {
           res,
           duration: calcDuration(start),
         };
-        reqLog.info(data, "request finish");
+        reqLog.info(data, 'request finish');
       });
 
-      res.on("close", () => {
+      res.on('close', () => {
         const data = {
           res,
           duration: calcDuration(start),
         };
-        reqLog.warn(data, "request socket closed");
+        reqLog.warn(data, 'request socket closed');
       });
 
       next();
@@ -77,7 +77,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     redis: opts.url,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
-    useClusterMode: opts.useClusterMode
+    useClusterMode: opts.useClusterMode,
   });
 
   if (opts.autoDiscover) {
@@ -87,7 +87,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
   collector.collectJobCompletions();
 
   app.post(
-    "/discover_queues",
+    '/discover_queues',
     (
       _req: express.Request,
       res: express.Response,
@@ -105,7 +105,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
   );
 
   app.get(
-    "/healthz",
+    '/healthz',
     (
       _req: express.Request,
       res: express.Response,
@@ -125,7 +125,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
   );
 
   app.get(
-    "/metrics",
+    '/metrics',
     (
       _req: express.Request,
       res: express.Response,
@@ -150,7 +150,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     ) => {
       res.status(500);
       res.send({
-        err: (err && err.message) || "Unknown error",
+        err: (err && err.message) || 'Unknown error',
       });
     }
   );
@@ -175,11 +175,11 @@ export async function startServer(
     });
   });
 
-  process.on("SIGTERM", () => server.close());
+  process.on('SIGTERM', () => server.close());
 
   const done = new Promise<void>((resolve, reject) => {
-    server.on("close", () => resolve());
-    server.on("error", (err: any) => reject(err));
+    server.on('close', () => resolve());
+    server.on('error', (err: any) => reject(err));
   });
 
   return { done };
