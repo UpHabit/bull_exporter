@@ -78,6 +78,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
     useClusterMode: opts.useClusterMode,
+    discoverQueuesKey: opts.discoverQueuesKey,
   });
 
   if (opts.autoDiscover) {
@@ -126,18 +127,20 @@ export async function makeServer(opts: Options): Promise<express.Application> {
 
   app.get(
     '/metrics',
-    (
+    async (
       _req: express.Request,
       res: express.Response,
       next: express.NextFunction
     ) => {
-      collector
-        .updateAll()
-        .then(() => {
-          res.contentType(promClient.register.contentType);
-          res.send(promClient.register.metrics());
-        })
-        .catch((err) => next(err));
+      try {
+        await collector.getQueues();
+        await collector.updateAll();
+
+        res.contentType(promClient.register.contentType);
+        res.send(promClient.register.metrics());
+      } catch (err) {
+        next(err);
+      }
     }
   );
 

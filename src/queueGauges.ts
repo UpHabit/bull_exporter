@@ -8,7 +8,7 @@ export interface QueueGauges {
   delayed: Gauge<LabelsT>;
   failed: Gauge<LabelsT>;
   waiting: Gauge<LabelsT>;
-  completeSummary: Summary<LabelsT>;
+  completeSummary: Summary<LabelsT>
 }
 
 export function makeGuages(
@@ -53,7 +53,7 @@ export function makeGuages(
       name: `${statPrefix}waiting`,
       help: 'Number of waiting messages',
       labelNames: ['queue', 'prefix'],
-    }),
+    })
   };
 }
 

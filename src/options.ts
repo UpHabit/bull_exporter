@@ -11,6 +11,7 @@ export interface Options {
   bindAddress: string;
   autoDiscover: boolean;
   useClusterMode: boolean;
+  discoverQueuesKey: string;
   _: string[];
 }
 
@@ -59,6 +60,11 @@ export function getOptionsFromArgs(...args: string[]): Options {
         alias: 'c',
         default: false,
         type: 'boolean',
+      },
+      discoverQueuesKey: {
+        alias: 'discover-queues-key',
+        default: 'queues',
+        type: 'string',
       },
     })
     .parse(args);

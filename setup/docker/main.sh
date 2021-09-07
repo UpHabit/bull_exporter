@@ -7,11 +7,13 @@ metric_prefix="${EXPORTER_STAT_PREFIX:-bull_queue_}"
 queues="${EXPORTER_QUEUES:-}"
 EXPORTER_AUTODISCOVER="${EXPORTER_AUTODISCOVER:-}"
 EXPORTER_REDIS_CLUSTER="${EXPORTER_REDIS_CLUSTER:-}"
+EXPORTER_DISCOVER_QUEUES_KEY="${EXPORTER_DISCOVER_QUEUES_KEY:-}"
 
 flags=(
   --url "$url"
   --prefix "$prefix"
   --metric-prefix "$metric_prefix"
+  --discover-queues-key "${EXPORTER_DISCOVER_QUEUES_KEY}"
 )
 
 if [[ "$EXPORTER_AUTODISCOVER" != 0 && "$EXPORTER_AUTODISCOVER" != 'false' ]] ; then

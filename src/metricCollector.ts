@@ -1,6 +1,7 @@
 import bull from 'bull';
 import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
+import IORedis from 'ioredis';
 import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 import { Readable } from 'stream';
@@ -20,6 +21,7 @@ export interface MetricCollectorOptions
   autoDiscover: boolean;
   logger: Logger;
   useClusterMode: boolean;
+  discoverQueuesKey?: string;
 }
 
 export interface QueueData<T = unknown> {
@@ -55,6 +57,8 @@ export class MetricCollector {
 
   private readonly guages: QueueGauges;
 
+  private readonly discoverQueuesKey?: string;
+
   constructor(
     queueNames: string[],
     opts: MetricCollectorOptions,
@@ -66,6 +70,7 @@ export class MetricCollector {
       redis,
       useClusterMode,
       metricPrefix,
+      discoverQueuesKey,
       ...bullOpts
     } = opts;
     this.redisUri = redis;
@@ -79,6 +84,7 @@ export class MetricCollector {
     this.logger = logger || globalLogger;
     this.addToQueueSet(queueNames);
     this.guages = makeGuages(metricPrefix, registers);
+    this.discoverQueuesKey = discoverQueuesKey;
   }
 
   private createClient(
@@ -93,7 +99,10 @@ export class MetricCollector {
       : new IoRedis(this.redisUri, redisOpts);
   }
 
-  private addToQueueSet(names: string[]): void {
+  private addToQueueSet(names: string[], clearAll: boolean = false): void {
+    if(clearAll){
+      this.queuesByName.clear();
+    }
     for (const name of names) {
       if (this.queuesByName.has(name)) {
         continue;
@@ -108,6 +117,23 @@ export class MetricCollector {
         prefix: this.bullOpts.prefix || 'bull',
       });
     }
+  }
+
+  public async getQueues(): Promise<void> {
+    this.logger.info('getQueues initiating queue retrieval', {
+      discoverQueuesKey: this.discoverQueuesKey,
+    });
+    if (!this.discoverQueuesKey) {
+      return;
+    }
+
+    const queues = await (this.defaultRedisClient as IORedis.Redis).smembers(
+      this.discoverQueuesKey
+    );
+
+    this.logger.info('finished getting queues', { queues });
+
+    this.addToQueueSet(queues, true);
   }
 
   public async discoverAll(): Promise<void> {
