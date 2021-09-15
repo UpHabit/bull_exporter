@@ -10,6 +10,7 @@ import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueG
 export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
   metricPrefix: string;
   redis: string;
+  redisPassword: string;
   autoDiscover: boolean;
   logger: Logger;
 }
@@ -26,6 +27,7 @@ export class MetricCollector {
 
   private readonly defaultRedisClient: IoRedis.Redis;
   private readonly redisUri: string;
+  private readonly redisPassword: string;
   private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
 
@@ -42,9 +44,11 @@ export class MetricCollector {
     opts: MetricCollectorOptions,
     registers: Registry[] = [globalRegister],
   ) {
-    const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
+    const { logger, autoDiscover, redis, redisPassword, metricPrefix, ...bullOpts } = opts;
+    logger.info('connection to redis ' + redis + ' with password ' + redisPassword);
     this.redisUri = redis;
-    this.defaultRedisClient = new IoRedis(this.redisUri);
+    this.redisPassword = redisPassword;
+    this.defaultRedisClient = new IoRedis(this.redisUri, { password : this.redisPassword });
     this.defaultRedisClient.setMaxListeners(32);
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
@@ -55,6 +59,9 @@ export class MetricCollector {
   private createClient(_type: 'client' | 'subscriber' | 'bclient', redisOpts?: IoRedis.RedisOptions): IoRedis.Redis {
     if (_type === 'client') {
       return this.defaultRedisClient!;
+    }
+    if (redisOpts){
+      redisOpts.password = this.redisPassword;
     }
     return new IoRedis(this.redisUri, redisOpts);
   }

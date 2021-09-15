@@ -2,6 +2,7 @@
 set -euo pipefail
 
 url="${EXPORTER_REDIS_URL:-redis://localhost:6379/0}"
+password="${EXPORTER_REDIS_PASSWORD:-}"
 prefix="${EXPORTER_PREFIX:-bull}"
 metric_prefix="${EXPORTER_STAT_PREFIX:-bull_queue_}"
 queues="${EXPORTER_QUEUES:-}"
@@ -9,6 +10,7 @@ EXPORTER_AUTODISCOVER="${EXPORTER_AUTODISCOVER:-}"
 
 flags=(
   --url "$url"
+  --password "$password"
   --prefix "$prefix"
   --metric-prefix "$metric_prefix"
 )
