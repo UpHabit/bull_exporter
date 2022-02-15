@@ -3,6 +3,7 @@ import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
 import IoRedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
+import redisUrlPlus from 'redis-url-plus';
 
 import { logger as globalLogger } from './logger';
 import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
@@ -44,7 +45,7 @@ export class MetricCollector {
   ) {
     const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
-    this.defaultRedisClient = new IoRedis(this.redisUri);
+    this.defaultRedisClient = new IoRedis(redisUrlPlus(this.redisUri));
     this.defaultRedisClient.setMaxListeners(32);
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
@@ -56,7 +57,7 @@ export class MetricCollector {
     if (_type === 'client') {
       return this.defaultRedisClient!;
     }
-    return new IoRedis(this.redisUri, redisOpts);
+    return new IoRedis(Object.assign(redisUrlPlus(this.redisUri), redisOpts));
   }
 
   private addToQueueSet(names: string[]): void {
