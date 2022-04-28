@@ -1,4 +1,4 @@
-ame: Bull Exporter push to Docker Hub
+name: Bull Exporter push to Docker Hub
 
 on:
   push:
