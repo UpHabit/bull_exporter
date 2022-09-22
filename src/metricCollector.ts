@@ -45,7 +45,6 @@ export class MetricCollector {
     registers: Registry[] = [globalRegister],
   ) {
     const { logger, autoDiscover, redis, redisPassword, metricPrefix, ...bullOpts } = opts;
-    logger.info('connection to redis ' + redis + ' with password ' + redisPassword);
     this.redisUri = redis;
     this.redisPassword = redisPassword;
     this.defaultRedisClient = new IoRedis(this.redisUri, { password : this.redisPassword });
