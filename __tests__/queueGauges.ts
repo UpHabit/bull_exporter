@@ -3,15 +3,14 @@ import * as bull from 'bull';
 import { getJobCompleteStats, getStats } from '../src/queueGauges';
 
 import { TestData } from './create.util';
-import { getCurrentTestHash } from './setup.util';
 
 let testData: TestData;
 
 beforeEach(async () => {
-  jest.resetModuleRegistry();
+  jest.resetModules();
   const { makeQueue } = await import('./create.util');
-  const hash = getCurrentTestHash();
-  testData = makeQueue(hash);
+  testData = makeQueue('test-queue');
+  console.log(testData);
 });
 
 afterEach(async () => {
@@ -135,8 +134,8 @@ it('should list 1 active job', async () => {
     registry,
   } = testData;
 
-  let jobStartedResolve!: () => void;
-  let jobDoneResolve!: () => void;
+  let jobStartedResolve!: (value?: any) => void;
+  let jobDoneResolve!: (value?: any) => void;
   const jobStartedPromise = new Promise(resolve => jobStartedResolve = resolve);
   const jobDonePromise = new Promise(resolve => jobDoneResolve = resolve);
 
