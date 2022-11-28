@@ -6,7 +6,7 @@ node_js:
 
 env:
   global:
-    - KUBECTL_VERSION=v1.11.0
+    - KUBECTL_VERSION=v1.22.0
 
 branches:
   only:

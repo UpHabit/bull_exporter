@@ -1,6 +1,5 @@
 module.exports = {
   preset: 'ts-jest',
-  // preset: 'ts-jest/presets/js-with-babel',
   testEnvironment: 'node',
   collectCoverage: false,
   testPathIgnorePatterns: [
@@ -9,10 +8,15 @@ module.exports = {
     '[.]util[.][jt]s$',
     '[.]d[.][jt]s$',
   ],
-  setupTestFrameworkScriptFile: '<rootDir>/__tests__/setup.util.ts',
-  globals: {
-    'ts-jest': {
-      tsConfig: '__tests__/tsconfig.json'
-    }
-  }
-};
+  transform: {
+    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
+    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        // ts-jest configuration goes here
+        tsconfig: '__tests__/tsconfig.json',
+      },
+    ],
+  },
+}
