@@ -1,13 +1,13 @@
-import bull from 'bull';
+import { Queue, QueueEvents, QueueOptions } from 'bullmq';
 import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
-import IoRedis from 'ioredis';
+import IoRedis, { Redis } from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
 import { logger as globalLogger } from './logger';
 import { getJobCompleteStats, getStats, makeGuages, QueueGauges } from './queueGauges';
 
-export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'> {
+export interface MetricCollectorOptions extends Omit<QueueOptions, 'redis'> {
   metricPrefix: string;
   redis: string;
   autoDiscover: boolean;
@@ -15,18 +15,19 @@ export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'>
 }
 
 export interface QueueData<T = unknown> {
-  queue: bull.Queue<T>;
+  queue: Queue<T>;
   name: string;
   prefix: string;
+  queueEvents: QueueEvents;
 }
 
 export class MetricCollector {
 
   private readonly logger: Logger;
 
-  private readonly defaultRedisClient: IoRedis.Redis;
+  private readonly defaultRedisClient: Redis;
   private readonly redisUri: string;
-  private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
+  private readonly bullOpts: Omit<QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
 
   private get queues(): QueueData<unknown>[] {
@@ -52,13 +53,6 @@ export class MetricCollector {
     this.guages = makeGuages(metricPrefix, registers);
   }
 
-  private createClient(_type: 'client' | 'subscriber' | 'bclient', redisOpts?: IoRedis.RedisOptions): IoRedis.Redis {
-    if (_type === 'client') {
-      return this.defaultRedisClient!;
-    }
-    return new IoRedis(this.redisUri, redisOpts);
-  }
-
   private addToQueueSet(names: string[]): void {
     for (const name of names) {
       if (this.queuesByName.has(name)) {
@@ -67,11 +61,12 @@ export class MetricCollector {
       this.logger.info('added queue', name);
       this.queuesByName.set(name, {
         name,
-        queue: new bull(name, {
+        queue: new Queue(name, {
           ...this.bullOpts,
-          createClient: this.createClient.bind(this),
+          connection: this.defaultRedisClient,
         }),
         prefix: this.bullOpts.prefix || 'bull',
+        queueEvents: new QueueEvents(name)
       });
     }
   }
@@ -111,7 +106,7 @@ export class MetricCollector {
     for (const q of this.queues) {
       const cb = this.onJobComplete.bind(this, q);
       this.myListeners.add(cb);
-      q.queue.on('global:completed', cb);
+      q.queueEvents.on('completed', ({jobId}) => { return this.onJobComplete(q, jobId)});
     }
   }
 

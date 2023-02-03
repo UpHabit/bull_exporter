@@ -1,15 +1,14 @@
 {
-  "name": "bull_exporter",
-  "version": "1.3.9",
-  "description": "Promethus Exporter for Bull Queues",
+  "name": "bullmq_exporter",
+  "version": "1.0.0",
+  "description": "Promethus Exporter for BullMQ Queues",
   "main": "dist/src/index.js",
-  "repository": "git@github.com:UpHabit/bull_exporter.git",
-  "author": "Gabriel Castro <GabrielCastro@users.noreply.github.com>",
+  "repository": "git@github.com:marius-juro/bullmq_exporter.git",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p .",
     "lint": "tslint -p .",
-    "test": "jest --ci"
+    "test": "jest --ci --forceExit"
   },
   "devDependencies": {
     "@babel/core": "7.10.4",
@@ -28,11 +27,10 @@
     "typescript": "3.9.6"
   },
   "dependencies": {
-    "@types/bull": "^3.5.4",
     "@types/bunyan": "^1.8.5",
     "@types/uuid": "^8.0.0",
     "@types/yargs": "^15.0.0",
-    "bull": "^3.6.0",
+    "bullmq": "^3.6.1",
     "bunyan": "^1.8.12",
     "express": "^4.17.1",
     "prom-client": "^12.0.0",
