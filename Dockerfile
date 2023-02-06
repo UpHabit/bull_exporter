@@ -1,4 +1,4 @@
-FROM node:10-alpine as build-env
+FROM node:18-alpine as build-env
 
 RUN mkdir -p /src
 WORKDIR /src
@@ -11,7 +11,7 @@ COPY . .
 RUN node_modules/.bin/tsc -p .
 RUN yarn install --pure-lockfile --production
 
-FROM node:10-alpine
+FROM node:18-alpine
 RUN apk --no-cache add tini bash
 ENTRYPOINT ["/sbin/tini", "--"]
 
