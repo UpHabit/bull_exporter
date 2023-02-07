@@ -11,6 +11,7 @@ beforeEach(async () => {
 	jest.resetModules();
 	const hash = getCurrentTestHash();
 	testData = makeQueue(hash);
+	await testData.queue.waitUntilReady();
 });
 
 afterEach(async () => {
