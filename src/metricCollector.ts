@@ -106,7 +106,7 @@ export class MetricCollector {
     for (const q of this.queues) {
       const cb = this.onJobComplete.bind(this, q);
       this.myListeners.add(cb);
-      q.queueEvents.on('completed', ({jobId}) => { return this.onJobComplete(q, jobId)});
+      q.queueEvents.on('completed', ({jobId}) => cb(jobId));
     }
   }
 
@@ -123,10 +123,10 @@ export class MetricCollector {
     this.defaultRedisClient.disconnect();
     for (const q of this.queues) {
       for (const l of this.myListeners) {
-        (q.queue as any as EventEmitter).removeListener('global:completed', l);
+        q.queueEvents.removeListener('completed', l);
       }
     }
-    await Promise.all(this.queues.map(q => q.queue.close()));
+    await Promise.all(this.queues.reduce((ary, q) => ary.concat([q.queue.close(), q.queueEvents.close()]), [] as Promise<void>[]));
   }
 
 }
