@@ -1,5 +1,4 @@
 import { Processor, Queue, QueueEvents, Worker } from 'bullmq';
-// import RedisClient from 'ioredis';
 import { Registry } from 'prom-client';
 
 import { makeGuages, QueueGauges } from '../src/queueGauges';
@@ -14,10 +13,7 @@ export interface TestData {
 	worker?: Worker;
 }
 
-// const connection: RedisClient = new RedisClient({ host: 'localhost', port: 6379 });
-// connection.options.maxRetriesPerRequest = null; // otherwise BullMQ complains, not overly clear why, see https://github.com/OptimalBits/bull/blob/develop/CHANGELOG.md#400-2021-10-27
-
-const connection = { host: 'localhost', port: 6379 };
+const connection = { host: process.env.REDIS_HOST ?? 'localhost', port: process.env.REDIS_PORT && parseInt(process.env.REDIS_PORT) || 6379 };
 
 export function makeQueue(name: string = 'TestQueue', prefix: string = 'test-queue'): TestData {
 	const registry = new Registry();

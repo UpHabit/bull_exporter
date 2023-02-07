@@ -1,0 +1,24 @@
+volumes:
+  node_modules:
+
+services:
+  redis:
+    image: redis
+    ports:
+      - "36379:6379"
+
+  app:
+    image: "node:alpine"
+    depends_on:
+      - redis
+    volumes:
+      - ".:/app"
+      - "node_modules:/app/node_modules"
+    working_dir: /app
+    environment:
+      - "REDIS_HOST=redis"
+      - "REDIS_PORT=6379"
+    command:
+      - tail
+      - -f
+      - /dev/null
