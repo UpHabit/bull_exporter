@@ -8,7 +8,7 @@ let testData: TestData;
 const JOB_NAME = 'test-job';
 
 beforeEach(async () => {
-	jest.resetModuleRegistry();
+	jest.resetModules();
 	const hash = getCurrentTestHash();
 	testData = makeQueue(hash);
 });
@@ -101,8 +101,8 @@ it('should list 1 active job', async () => {
 
 	let jobStartedResolve!: () => void;
 	let jobDoneResolve!: () => void;
-	const jobStartedPromise = new Promise((resolve) => (jobStartedResolve = resolve));
-	const jobDonePromise = new Promise((resolve) => (jobDoneResolve = resolve));
+	const jobStartedPromise = new Promise<void>((resolve) => (jobStartedResolve = resolve));
+	const jobDonePromise = new Promise<void>((resolve) => (jobDoneResolve = resolve));
 
 	testData.worker = makeWorker(queue.name, async () => {
 		jobStartedResolve();
