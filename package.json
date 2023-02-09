@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc -p .",
     "lint": "tslint -p .",
-    "test": "jest --ci --detectOpenHandles"
+    "test": "jest --ci"
   },
   "devDependencies": {
     "@babel/core": "7.10.4",

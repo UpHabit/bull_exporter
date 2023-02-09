@@ -8,10 +8,8 @@ let testData: TestData;
 const JOB_NAME = 'test-job';
 
 beforeEach(async () => {
-	jest.resetModules();
 	const hash = getCurrentTestHash();
-	testData = makeQueue(hash);
-	await testData.queue.waitUntilReady();
+	testData = await makeQueue(hash);
 });
 
 afterEach(async () => {
@@ -33,7 +31,7 @@ it('should list 1 queued job', async () => {
 
 it('should list 1 completed job', async () => {
 	const { name, queue, prefix, guages, registry, events } = testData;
-	testData.worker = makeWorker(name, async (jobInner: Job<unknown>) => {
+	testData.worker = await makeWorker(name, async (jobInner: Job<unknown>) => {
 		expect(jobInner).toMatchObject({ data: { a: 1 } });
 	});
 
@@ -48,7 +46,7 @@ it('should list 1 completed job', async () => {
 
 it('should list 1 completed job with delay', async () => {
 	const { name, queue, prefix, guages, registry, events } = testData;
-	testData.worker = makeWorker(name, async (jobInner: Job<unknown>) => {
+	testData.worker = await makeWorker(name, async (jobInner: Job<unknown>) => {
 		expect(jobInner).toMatchObject({ data: { a: 1 } });
 	});
 
@@ -67,7 +65,7 @@ it('should list 1 completed job with delay', async () => {
 it('should list 1 failed job', async () => {
 	const { name, queue, prefix, guages, registry, events } = testData;
 
-	testData.worker = makeWorker(queue.name, async (jobInner: Job<unknown>) => {
+	testData.worker = await makeWorker(queue.name, async (jobInner: Job<unknown>) => {
 		expect(jobInner).toMatchObject({ data: { a: 1 } });
 		throw new Error('expected');
 	});
@@ -91,7 +89,7 @@ it('should list 1 delayed job', async () => {
 
 	// for some reason delayed jobs are not obliterated, so we need to complete it first in order for the cleanup to succeed
 	await job.changeDelay(0);
-	testData.worker = makeWorker(name, async (jobInner: Job<unknown>) => {
+	testData.worker = await makeWorker(name, async (jobInner: Job<unknown>) => {
 		expect(jobInner).toMatchObject({ data: { a: 1 } });
 	});
 	await job.waitUntilFinished(events);
@@ -105,7 +103,7 @@ it('should list 1 active job', async () => {
 	const jobStartedPromise = new Promise<void>((resolve) => (jobStartedResolve = resolve));
 	const jobDonePromise = new Promise<void>((resolve) => (jobDoneResolve = resolve));
 
-	testData.worker = makeWorker(queue.name, async () => {
+	testData.worker = await makeWorker(queue.name, async () => {
 		jobStartedResolve();
 		await jobDonePromise;
 	});
