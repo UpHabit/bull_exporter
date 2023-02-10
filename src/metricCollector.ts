@@ -1,6 +1,5 @@
 import { Queue, QueueEvents, QueueOptions } from 'bullmq';
 import * as Logger from 'bunyan';
-import { EventEmitter } from 'events';
 import IoRedis, { Redis } from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
