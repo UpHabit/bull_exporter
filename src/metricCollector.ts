@@ -59,14 +59,16 @@ export class MetricCollector {
       }
       this.logger.info('added queue', name);
       this.queuesByName.set(name, {
-        name,
-        queue: new Queue(name, {
-          ...this.bullOpts,
-          connection: this.defaultRedisClient,
-        }),
-        prefix: this.bullOpts.prefix || 'bull',
-        queueEvents: new QueueEvents(name)
-      });
+				name,
+				queue: new Queue(name, {
+					...this.bullOpts,
+					connection: this.defaultRedisClient,
+				}),
+				prefix: this.bullOpts.prefix || 'bull',
+				queueEvents: new QueueEvents(name, {
+					connection: this.defaultRedisClient,
+				}),
+			});
     }
   }
 
