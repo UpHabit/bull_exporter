@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc -p .",
     "lint": "tslint -p .",
-    "test": "jest --ci"
+    "test": "jest --ci",
+    "start": "npx nodemon"
   },
   "devDependencies": {
     "@babel/core": "7.10.4",
@@ -24,8 +25,7 @@
     "tslint": "5.20.1",
     "tslint-config-airbnb": "5.11.2",
     "tslint-eslint-rules": "5.4.0",
-    "tslint-microsoft-contrib": "6.2.0",
-    "typescript": "3.9.6"
+    "tslint-microsoft-contrib": "6.2.0"
   },
   "dependencies": {
     "@types/bull": "^3.5.4",
@@ -34,9 +34,11 @@
     "@types/yargs": "^15.0.0",
     "bull": "^3.6.0",
     "bunyan": "^1.8.12",
+    "dotenv": "^16.1.4",
     "express": "^4.17.1",
     "prom-client": "^12.0.0",
     "tslib": "^2.0.0",
+    "typescript": "^3.9.10",
     "uuid": "^8.0.0",
     "yargs": "^15.1.0"
   },
@@ -46,6 +48,6 @@
     "mkdirp": "^0.5.3",
     "minimist": ">=1.2.5",
     "@types/node": "10.17.27",
-    "typescript": "3.9.6"
+    "typescript": "^3.9.10"
   }
 }

@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  bull_exporter:
+    image: bfdockerdev/bull-exporter-brainforge:v1
+    container_name: 'bull-exporter-brainforge'
+    env_file:
+      - .env
+    ports:
+      - 9538:9538

@@ -1,15 +1,14 @@
-import promClient from 'prom-client';
+import "dotenv/config";
 
-import { logger } from './logger';
-import { MetricCollector } from './metricCollector';
-import { getOptionsFromArgs, Options } from './options';
-import { startServer } from './server';
+import promClient from "prom-client";
 
-// because we explicitly want just the metrics here
-// tslint:disable:no-console
+import { logger } from "./logger";
+import { MetricCollector } from "./metricCollector";
+import { getOptions, Options } from "./options";
+import { startServer } from "./server";
 
 export async function printOnce(opts: Options): Promise<void> {
-  const collector = new MetricCollector(opts._, {
+  const collector = new MetricCollector([], {
     logger,
     metricPrefix: opts.metricPrefix,
     redis: opts.url,
@@ -30,8 +29,8 @@ export async function runServer(opts: Options): Promise<void> {
   await done;
 }
 
-export async function main(...args: string[]): Promise<void> {
-  const opts = getOptionsFromArgs(...args);
+export async function main(): Promise<void> {
+  const opts = getOptions();
   if (opts.once) {
     await printOnce(opts);
   } else {
@@ -40,22 +39,17 @@ export async function main(...args: string[]): Promise<void> {
 }
 
 if (require.main === module) {
-  const args = process.argv.slice(2);
-
   let exitCode = 0;
-  main(...args)
-    .catch(() => process.exitCode = exitCode = 1)
+  main()
+    .catch(() => (process.exitCode = exitCode = 1))
     .then(() => {
-      setTimeout(
-        () => {
-          logger.error('No clean exit after 5 seconds, force exit');
-          process.exit(exitCode);
-        },
-        5000,
-      ).unref();
+      setTimeout(() => {
+        logger.error("No clean exit after 5 seconds, force exit");
+        process.exit(exitCode);
+      }, 5000).unref();
     })
-    .catch(err => {
-      console.error('Double error');
+    .catch((err) => {
+      console.error("Double error");
       console.error(err.stack);
       process.exit(-1);
     });

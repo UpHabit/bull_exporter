@@ -1,27 +1,17 @@
-FROM node:10-alpine as build-env
+FROM node:14
 
-RUN mkdir -p /src
-WORKDIR /src
+WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-RUN yarn install --pure-lockfile
+COPY package*.json ./
+
+RUN npm install
 
 COPY . .
-RUN node_modules/.bin/tsc -p .
-RUN yarn install --pure-lockfile --production
 
-FROM node:10-alpine
-RUN apk --no-cache add tini bash
-ENTRYPOINT ["/sbin/tini", "--"]
+RUN npm run build
 
-RUN mkdir -p /src
-RUN chown -R nobody:nogroup /src
-WORKDIR /src
-USER nobody
+EXPOSE 3000
 
-COPY /setup/docker/main.sh /src/
-COPY --chown=nobody:nogroup --from=build-env /src/node_modules /src/node_modules
-COPY --chown=nobody:nogroup --from=build-env /src/dist /src/dist
+ENV NODE_ENV production
 
-CMD /src/main.sh
+CMD ["node", "dist/index.js"]

@@ -3,10 +3,12 @@
     "target": "es2018",
     "module": "commonjs",
     "lib": ["es2018"],
+    "allowJs": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
+    "rootDir": "src",
     "importHelpers": true,
     "strict": true,
     "noImplicitAny": true,
@@ -20,7 +22,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**.ts"
-  ]
+  "include": ["src/**.ts"]
 }

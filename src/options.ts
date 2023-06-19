@@ -1,7 +1,3 @@
-import yargs from 'yargs';
-
-import { version } from '../package.json';
-
 export interface Options {
   url: string;
   prefix: string;
@@ -10,49 +6,20 @@ export interface Options {
   port: number;
   bindAddress: string;
   autoDiscover: boolean;
-  _: string[];
 }
 
-export function getOptionsFromArgs(...args: string[]): Options {
-  return yargs
-    .version(version)
-    .alias('V', 'version')
-    .options({
-      url: {
-        alias: 'u',
-        describe: 'A redis connection url',
-        default: 'redis://127.0.0.1:6379',
-        demandOption: true,
-      },
-      prefix: {
-        alias: 'p',
-        default: 'bull',
-        demandOption: true,
-      },
-      metricPrefix: {
-        alias: 'm',
-        default: 'bull_queue_',
-        defaultDescription: 'prefix for all exported metrics',
-        demandOption: true,
-      },
-      once: {
-        alias: 'n',
-        default: false,
-        type: 'boolean',
-        description: 'Print stats and exit without starting a server',
-      },
-      port: {
-        default: 9538,
-      },
-      autoDiscover: {
-        default: false,
-        alias: 'a',
-        type: 'boolean',
-      },
-      bindAddress: {
-        alias: 'b',
-        description: 'Address to listen on',
-        default: '0.0.0.0',
-      },
-    }).parse(args);
+export function getOptions(): Options {
+  const port = process.env.PORT ? +process.env.PORT : 9538;
+  const url = process.env.REDIS_URL;
+  const prefix = process.env.PREFIX ?? "bull";
+  const metricPrefix = process.env.METRIC_PREFIX ?? "bull_queue_";
+  const autoDiscover = process.env.AUTO_DISCOVER === "false" ? false : true;
+  const bindAddress = process.env.BIND_ADDRESS ?? "0.0.0.0"; // Address to listen on
+  const once = process.env.ONCE === "true" ? true : false;
+
+  if (!url) {
+    throw new Error("A redis connection url not set");
+  }
+
+  return { port, url, prefix, metricPrefix, autoDiscover, bindAddress, once };
 }
