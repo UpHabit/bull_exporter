@@ -39,14 +39,15 @@ this can also be triggered manually from the `/discover_queues` endpoint
 
 ## Metrics
 
-| Metric                       | type    | description |
-|------------------------------|---------|-------------|
+| Metric                       | type    | description                                             |
+|------------------------------|---------|---------------------------------------------------------|
 | bull_queue_completed         | counter | Total number of completed jobs                          |
 | bull_queue_complete_duration | summary | Processing time for completed jobs                      |
 | bull_queue_active            | counter | Total number of active jobs (currently being processed) |
 | bull_queue_delayed           | counter | Total number of jobs that will run in the future        |
 | bull_queue_failed            | counter | Total number of failed jobs                             |
 | bull_queue_waiting           | counter | Total number of jobs waiting to be processed            |
+| bull_queue_prioritized       | counter | Total number of prioritized jobs                        |
 
 ## Kubernetes Usage
 
