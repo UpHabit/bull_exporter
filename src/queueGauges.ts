@@ -9,6 +9,7 @@ export interface QueueGauges {
 	failed: Gauge<LabelsT>;
 	waiting: Gauge<LabelsT>;
 	completeSummary: Summary<LabelsT>;
+	prioritized: Gauge<LabelsT>;
 }
 
 export function makeGuages(statPrefix: string, registers: Registry[]): QueueGauges {
@@ -51,6 +52,12 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
 			help: 'Number of waiting messages',
 			labelNames: ['queue', 'prefix'],
 		}),
+		prioritized: new Gauge({
+			registers,
+			name: `${statPrefix}prioritized`,
+			help: 'Number of prioritized messages',
+			labelNames: ['queue', 'prefix'],
+		}),
 	};
 }
 
@@ -63,11 +70,12 @@ export async function getJobCompleteStats(prefix: string, name: string, job: Job
 }
 
 export async function getStats(prefix: string, name: string, queue: Queue, gauges: QueueGauges): Promise<void> {
-	const { completed, active, delayed, failed, waiting } = await queue.getJobCounts();
+	const { completed, active, delayed, failed, waiting, prioritized } = await queue.getJobCounts();
 
 	gauges.completed.set({ prefix, queue: name }, completed);
 	gauges.active.set({ prefix, queue: name }, active);
 	gauges.delayed.set({ prefix, queue: name }, delayed);
 	gauges.failed.set({ prefix, queue: name }, failed);
 	gauges.waiting.set({ prefix, queue: name }, waiting);
+	gauges.prioritized.set({ prefix, queue: name }, prioritized);
 }
