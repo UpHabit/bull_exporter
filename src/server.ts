@@ -61,6 +61,7 @@ export async function makeServer(opts: Options): Promise<express.Application> {
     redis: opts.url,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
+    queuesToFollow: opts.queuesToFollow,
   });
 
   if (opts.autoDiscover) {

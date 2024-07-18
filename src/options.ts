@@ -6,6 +6,7 @@ export interface Options {
   url: string;
   prefix: string;
   metricPrefix: string;
+  queuesToFollow: string;
   once: boolean;
   port: number;
   bindAddress: string;
@@ -33,6 +34,12 @@ export function getOptionsFromArgs(...args: string[]): Options {
         alias: 'm',
         default: 'bull_queue_',
         defaultDescription: 'prefix for all exported metrics',
+        demandOption: true,
+      },
+      queuesToFollow: {
+        alias: 'q',
+        default: '',
+        defaultDescription: 'queue(s) name(s) to monitoring separeted by pipe',
         demandOption: true,
       },
       once: {

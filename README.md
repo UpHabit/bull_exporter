@@ -1,7 +1,6 @@
 # Taurus Queue Exporter
 ___
 
-
 ## UI
 ![Grafana Dashboard](./docs/img/grafana-1.png)
 
@@ -30,6 +29,7 @@ this can also be triggered manually from the `/discover_queues` endpoint
 | bull_queue_delayed           | counter | Total number of jobs that will run in the future        |
 | bull_queue_failed            | counter | Total number of failed jobs                             |
 | bull_queue_waiting           | counter | Total number of jobs waiting to be processed            |
+| bull_queue_completed_count   | counter | Total number of all jobs for all queues completed       |
 
 ## Kubernetes Usage
 
@@ -42,6 +42,7 @@ this can also be triggered manually from the `/discover_queues` endpoint
 | EXPORTER_STAT_PREFIX  | bull_queue_              | prefix for exported metrics                     |
 | EXPORTER_QUEUES       | -                        | a space separated list of queues to check       |
 | EXPORTER_AUTODISCOVER | -                        | set to '0' or 'false' to disable queue discovery|
+| QUEUES_TO_FOLLOW      | -                        | queue(s) name(s) to monitoring separeted by pipe|
 
 
 ### Example deployment

@@ -12,6 +12,7 @@ export interface MetricCollectorOptions extends Omit<bull.QueueOptions, 'redis'>
   redis: string;
   autoDiscover: boolean;
   logger: Logger;
+  queuesToFollow: string;
 }
 
 export interface QueueData<T = unknown> {
@@ -23,6 +24,7 @@ export interface QueueData<T = unknown> {
 export class MetricCollector {
 
   private readonly logger: Logger;
+  private readonly queuesToFollow: string;
 
   private readonly defaultRedisClient: IoRedis.Redis;
   private readonly redisUri: string;
@@ -46,6 +48,7 @@ export class MetricCollector {
     this.redisUri = redis;
     this.defaultRedisClient = new IoRedis(this.redisUri);
     this.defaultRedisClient.setMaxListeners(32);
+    this.queuesToFollow = opts.queuesToFollow;
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
     this.addToQueueSet(queueNames);
@@ -77,7 +80,12 @@ export class MetricCollector {
   }
 
   public async discoverAll(): Promise<void> {
-    const keyPattern = new RegExp(`^${this.bullOpts.prefix}:([^:]+):(id|failed|active|waiting|stalled-check)$`);
+    let queuesToFollow = this.queuesToFollow;
+    if (!queuesToFollow.length) {
+      queuesToFollow = '[^:]+';
+    }
+
+    const keyPattern = new RegExp(`^${this.bullOpts.prefix}:(${queuesToFollow}):(id|failed|active|waiting|stalled-check)$`);
     this.logger.info({ pattern: keyPattern.source }, 'running queue discovery');
 
     const keyStream = this.defaultRedisClient.scanStream({

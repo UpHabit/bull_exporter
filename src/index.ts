@@ -15,6 +15,7 @@ export async function printOnce(opts: Options): Promise<void> {
     redis: opts.url,
     prefix: opts.prefix,
     autoDiscover: opts.autoDiscover,
+    queuesToFollow: opts.queuesToFollow,
   });
   if (opts.autoDiscover) {
     await collector.discoverAll();
