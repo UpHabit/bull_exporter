@@ -1,13 +1,13 @@
 import { Processor, Queue, QueueEvents, Worker } from 'bullmq';
 import { Registry } from 'prom-client';
 
-import { makeGuages, QueueGauges } from '../src/queueGauges';
+import { makeGuages, Index } from '../src/queue-gauges';
 
 export interface TestData {
 	name: string;
 	queue: Queue;
 	prefix: string;
-	guages: QueueGauges;
+	guages: Index;
 	registry: Registry;
 	events: QueueEvents;
 	worker?: Worker;

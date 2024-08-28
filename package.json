@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "Promethus Exporter for BullMQ Queues",
   "main": "dist/src/index.js",
-  "repository": "git@github.com:marius-juro/bullmq_exporter.git",
+  "repository": "https://github.com/juroteam/bullmq_exporter",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p .",
-    "lint": "tslint -p .",
     "test": "jest --ci"
   },
   "devDependencies": {
@@ -29,6 +28,7 @@
     "bullmq": "^5.7.1",
     "bunyan": "^1.8.12",
     "express": "^4.17.1",
+    "express-promise-router": "^4.1.1",
     "prom-client": "^12.0.0",
     "tslib": "^2.0.0",
     "uuid": "^8.0.0",

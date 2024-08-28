@@ -1,5 +1,5 @@
 import { Job } from 'bullmq';
-import { getJobCompleteStats, getStats } from '../src/queueGauges';
+import { getJobCompleteStats, getStats } from '../src/queue-gauges';
 
 import { makeQueue, makeWorker, TestData } from './create.util';
 import { getCurrentTestHash } from './setup.util';

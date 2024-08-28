@@ -2,7 +2,7 @@ import { Job, Queue } from 'bullmq';
 import { Gauge, Registry, Summary } from 'prom-client';
 
 type LabelsT = 'queue' | 'prefix';
-export interface QueueGauges {
+export interface Index {
 	completed: Gauge<LabelsT>;
 	active: Gauge<LabelsT>;
 	delayed: Gauge<LabelsT>;
@@ -12,7 +12,7 @@ export interface QueueGauges {
 	prioritized: Gauge<LabelsT>;
 }
 
-export function makeGuages(statPrefix: string, registers: Registry[]): QueueGauges {
+export function makeGuages(statPrefix: string, registers: Registry[]): Index {
 	return {
 		completed: new Gauge({
 			registers,
@@ -61,7 +61,7 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
 	};
 }
 
-export async function getJobCompleteStats(prefix: string, name: string, job: Job, gauges: QueueGauges): Promise<void> {
+export async function getJobCompleteStats(prefix: string, name: string, job: Job, gauges: Index): Promise<void> {
 	if (!job.finishedOn) {
 		return;
 	}
@@ -69,7 +69,7 @@ export async function getJobCompleteStats(prefix: string, name: string, job: Job
 	gauges.completeSummary.observe({ prefix, queue: name }, duration);
 }
 
-export async function getStats(prefix: string, name: string, queue: Queue, gauges: QueueGauges): Promise<void> {
+export async function getStats(prefix: string, name: string, queue: Queue, gauges: Index): Promise<void> {
 	const { completed, active, delayed, failed, waiting, prioritized } = await queue.getJobCounts();
 
 	gauges.completed.set({ prefix, queue: name }, completed);
