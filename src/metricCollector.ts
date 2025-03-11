@@ -1,7 +1,7 @@
-import bull from 'bull';
+import bull, { Queue } from 'bullmq';
 import * as Logger from 'bunyan';
 import { EventEmitter } from 'events';
-import IoRedis from 'ioredis';
+import IORedis from 'ioredis';
 import { register as globalRegister, Registry } from 'prom-client';
 
 import { logger as globalLogger } from './logger';
@@ -24,7 +24,7 @@ export class MetricCollector {
 
   private readonly logger: Logger;
 
-  private readonly defaultRedisClient: IoRedis.Redis;
+  private readonly defaultRedisClient: IORedis.Redis;
   private readonly redisUri: string;
   private readonly bullOpts: Omit<bull.QueueOptions, 'redis'>;
   private readonly queuesByName: Map<string, QueueData<unknown>> = new Map();
@@ -44,19 +44,13 @@ export class MetricCollector {
   ) {
     const { logger, autoDiscover, redis, metricPrefix, ...bullOpts } = opts;
     this.redisUri = redis;
-    this.defaultRedisClient = new IoRedis(this.redisUri);
-    this.defaultRedisClient.setMaxListeners(32);
+    this.defaultRedisClient = new IORedis(this.redisUri, {
+      maxRetriesPerRequest: null,
+    });
     this.bullOpts = bullOpts;
     this.logger = logger || globalLogger;
     this.addToQueueSet(queueNames);
     this.guages = makeGuages(metricPrefix, registers);
-  }
-
-  private createClient(_type: 'client' | 'subscriber' | 'bclient', redisOpts?: IoRedis.RedisOptions): IoRedis.Redis {
-    if (_type === 'client') {
-      return this.defaultRedisClient!;
-    }
-    return new IoRedis(this.redisUri, redisOpts);
   }
 
   private addToQueueSet(names: string[]): void {
@@ -64,20 +58,25 @@ export class MetricCollector {
       if (this.queuesByName.has(name)) {
         continue;
       }
-      this.logger.info('added queue', name);
+      this.logger.info('adding queue', name);
+      const queue = new Queue(
+        name, {
+          ...this.bullOpts,
+          connection: this.defaultRedisClient,
+        },
+      );
+      this.logger.info('init queue', name);
       this.queuesByName.set(name, {
         name,
-        queue: new bull(name, {
-          ...this.bullOpts,
-          createClient: this.createClient.bind(this),
-        }),
+        queue,
         prefix: this.bullOpts.prefix || 'bull',
       });
+      this.logger.info('done adding queue', name);
     }
   }
 
   public async discoverAll(): Promise<void> {
-    const keyPattern = new RegExp(`^${this.bullOpts.prefix}:([^:]+):(id|failed|active|waiting|stalled-check)$`);
+    const keyPattern = new RegExp(`^${this.bullOpts.prefix}:([^:]+):(id|failed|active|waiting|stalled-check|prioritized)$`);
     this.logger.info({ pattern: keyPattern.source }, 'running queue discovery');
 
     const keyStream = this.defaultRedisClient.scanStream({

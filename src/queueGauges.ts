@@ -1,4 +1,4 @@
-import bull from 'bull';
+import bull from 'bullmq';
 import { Gauge, Registry, Summary } from 'prom-client';
 
 type LabelsT = 'queue' | 'prefix';
@@ -8,6 +8,7 @@ export interface QueueGauges {
   delayed: Gauge<LabelsT>;
   failed: Gauge<LabelsT>;
   waiting: Gauge<LabelsT>;
+  prioritized: Gauge<LabelsT>;
   completeSummary: Summary<LabelsT>;
 }
 
@@ -51,6 +52,12 @@ export function makeGuages(statPrefix: string, registers: Registry[]): QueueGaug
       help: 'Number of waiting messages',
       labelNames: ['queue', 'prefix'],
     }),
+    prioritized: new Gauge({
+      registers,
+      name: `${statPrefix}prioritized`,
+      help: 'Number of prioritized messages',
+      labelNames: ['queue', 'prefix'],
+    }),
   };
 }
 
@@ -63,11 +70,13 @@ export async function getJobCompleteStats(prefix: string, name: string, job: bul
 }
 
 export async function getStats(prefix: string, name: string, queue: bull.Queue, gauges: QueueGauges): Promise<void> {
-  const { completed, active, delayed, failed, waiting } = await queue.getJobCounts();
+  const jobCounts = await queue.getJobCounts();
+  // console.log(name, jobCounts);
 
-  gauges.completed.set({ prefix, queue: name }, completed);
-  gauges.active.set({ prefix, queue: name }, active);
-  gauges.delayed.set({ prefix, queue: name }, delayed);
-  gauges.failed.set({ prefix, queue: name }, failed);
-  gauges.waiting.set({ prefix, queue: name }, waiting);
+  gauges.completed.set({ prefix, queue: name }, jobCounts.completed);
+  gauges.active.set({ prefix, queue: name }, jobCounts.active);
+  gauges.delayed.set({ prefix, queue: name }, jobCounts.delayed);
+  gauges.failed.set({ prefix, queue: name }, jobCounts.failed);
+  gauges.waiting.set({ prefix, queue: name }, jobCounts.waiting);
+  gauges.prioritized.set({ prefix, queue: name }, jobCounts.prioritized);
 }
